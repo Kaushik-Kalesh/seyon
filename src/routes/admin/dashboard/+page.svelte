@@ -18,6 +18,8 @@
     fileInputRef.click();
   }
 
+  let saveStatus = $state<{type: 'success' | 'error', message: string} | null>(null);
+
   async function handleFileUpload(e: Event) {
     const input = e.target as HTMLInputElement;
     if (!input.files || input.files.length === 0 || !uploadTarget) return;
@@ -45,7 +47,8 @@
       }
       
     } catch (err: any) {
-      alert('Upload failed: ' + err.message);
+      saveStatus = { type: 'error', message: 'Upload failed: ' + err.message };
+      setTimeout(() => saveStatus = null, 3000);
     } finally {
       isUploading = false;
       uploadTarget = null;
@@ -55,6 +58,7 @@
   
   async function saveAll() {
     isSaving = true;
+    saveStatus = null;
     try {
       const res = await fetch('/api/save-all', {
         method: 'POST',
@@ -63,9 +67,12 @@
       });
       const result = await res.json();
       if (!result.success) throw new Error(result.error);
-      alert('All changes saved successfully!');
+      
+      saveStatus = { type: 'success', message: 'All changes saved!' };
+      setTimeout(() => saveStatus = null, 3000);
     } catch (e: any) {
-      alert('Failed to save changes: ' + e.message);
+      saveStatus = { type: 'error', message: 'Failed to save: ' + e.message };
+      setTimeout(() => saveStatus = null, 4000);
     } finally {
       isSaving = false;
     }
@@ -133,6 +140,11 @@
     </div>
     
     <div class="flex items-center gap-4">
+      {#if saveStatus}
+        <div in:fade out:fade class="px-4 py-2 rounded-lg text-sm font-bold {saveStatus.type === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">
+          {saveStatus.message}
+        </div>
+      {/if}
       <a href="/" target="_blank" class="text-sm font-medium text-gray-300 hover:text-white flex items-center gap-2 transition-colors ml-2">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
         Live Site
@@ -335,7 +347,7 @@
               <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Hero Background Image</label>
                 <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'homeHeroImage')}>
-                  <img src={siteSettings.homeHeroImage} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Home Hero"/>
+                  <img src={siteSettings.homeHeroImage || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Home Hero"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                     <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
                   </div>
@@ -345,7 +357,7 @@
               <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">About Section Image</label>
                 <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'homeAboutImage')}>
-                  <img src={siteSettings.homeAboutImage} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Home About"/>
+                  <img src={siteSettings.homeAboutImage || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Home About"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                     <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
                   </div>
@@ -359,7 +371,7 @@
               <div class="md:col-span-2 lg:col-span-3">
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Hero Background Image</label>
                 <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutHeroImage')}>
-                  <img src={siteSettings.aboutHeroImage} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="About Hero"/>
+                  <img src={siteSettings.aboutHeroImage || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="About Hero"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                     <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
                   </div>
@@ -369,7 +381,7 @@
               <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Grid Image 1</label>
                 <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutGridImage1')}>
-                  <img src={siteSettings.aboutGridImage1} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 1"/>
+                  <img src={siteSettings.aboutGridImage1 || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 1"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                     <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
                   </div>
@@ -379,7 +391,7 @@
               <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Grid Image 2</label>
                 <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutGridImage2')}>
-                  <img src={siteSettings.aboutGridImage2} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 2"/>
+                  <img src={siteSettings.aboutGridImage2 || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 2"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                     <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
                   </div>
@@ -389,7 +401,7 @@
               <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Grid Image 3</label>
                 <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutGridImage3')}>
-                  <img src={siteSettings.aboutGridImage3} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 3"/>
+                  <img src={siteSettings.aboutGridImage3 || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 3"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                     <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
                   </div>
@@ -399,7 +411,7 @@
               <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Grid Image 4</label>
                 <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutGridImage4')}>
-                  <img src={siteSettings.aboutGridImage4} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 4"/>
+                  <img src={siteSettings.aboutGridImage4 || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 4"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                     <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
                   </div>
