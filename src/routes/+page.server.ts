@@ -5,6 +5,7 @@ export async function load() {
   
   return {
     industries: data.industries,
-    featuredValves: data.valves.slice(0, 3)
+    featuredValves: data.valves.slice(0, 3),
+    siteSettings: data.siteSettings
   };
 }

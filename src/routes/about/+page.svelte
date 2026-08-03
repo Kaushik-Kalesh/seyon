@@ -1,10 +1,15 @@
+<script lang="ts">
+  import { page } from '$app/state';
+  let siteSettings = $derived(page.data.siteSettings || {});
+</script>
+
 <svelte:head>
   <title>About Us | Seyon</title>
 </svelte:head>
 
 <div class="bg-dark text-white py-24 px-4 relative overflow-hidden">
   <div class="absolute inset-0 z-0 opacity-20">
-    <img src="https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg" alt="Background" class="w-full h-full object-cover" />
+    <img src={siteSettings.aboutHeroImage || "https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg"} alt="Background" class="w-full h-full object-cover" />
   </div>
   <div class="page-container relative z-10 text-center">
     <h1 class="text-5xl font-bold mb-6">About Seyon</h1>
@@ -38,18 +43,18 @@
     <div class="grid grid-cols-2 gap-4">
       <div class="space-y-4 translate-y-8">
         <div class="aspect-[3/4] rounded-2xl overflow-hidden bg-gray-200">
-          <img src="https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg" alt="Facility 1" class="w-full h-full object-cover" />
+          <img src={siteSettings.aboutGridImage1 || "https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg"} alt="Facility 1" class="w-full h-full object-cover" />
         </div>
         <div class="aspect-square rounded-2xl overflow-hidden bg-gray-200">
-          <img src="https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg" alt="Facility 2" class="w-full h-full object-cover" />
+          <img src={siteSettings.aboutGridImage2 || "https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg"} alt="Facility 2" class="w-full h-full object-cover" />
         </div>
       </div>
       <div class="space-y-4">
         <div class="aspect-square rounded-2xl overflow-hidden bg-gray-200">
-          <img src="https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg" alt="Facility 3" class="w-full h-full object-cover" />
+          <img src={siteSettings.aboutGridImage3 || "https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg"} alt="Facility 3" class="w-full h-full object-cover" />
         </div>
         <div class="aspect-[3/4] rounded-2xl overflow-hidden bg-gray-200">
-          <img src="https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg" alt="Facility 4" class="w-full h-full object-cover" />
+          <img src={siteSettings.aboutGridImage4 || "https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg"} alt="Facility 4" class="w-full h-full object-cover" />
         </div>
       </div>
     </div>

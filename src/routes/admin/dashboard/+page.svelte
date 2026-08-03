@@ -2,18 +2,19 @@
   import { fade } from 'svelte/transition';
   let { data } = $props();
   
-  let industries = $state(data.industries);
-  let valves = $state(data.valves);
+  let industries = $state(data.industries || []);
+  let valves = $state(data.valves || []);
+  let siteSettings = $state(data.siteSettings || {});
   
   let activeTab = $state('valves');
   let isSaving = $state(false);
   
   let fileInputRef: HTMLInputElement;
   let isUploading = $state(false);
-  let uploadTarget = $state<{type: 'image'|'pdf', item: any} | null>(null);
+  let uploadTarget = $state<{type: 'image'|'pdf', item: any, prop?: string} | null>(null);
 
-  function triggerUpload(type: 'image'|'pdf', item: any) {
-    uploadTarget = { type, item };
+  function triggerUpload(type: 'image'|'pdf', item: any, prop?: string) {
+    uploadTarget = { type, item, prop };
     fileInputRef.click();
   }
 
@@ -38,9 +39,9 @@
       if (!result.success) throw new Error(result.error);
       
       if (uploadTarget.type === 'pdf') {
-        uploadTarget.item.pdfUrl = result.url;
+        uploadTarget.item[uploadTarget.prop || 'pdfUrl'] = result.url;
       } else if (uploadTarget.type === 'image') {
-        uploadTarget.item.imageUrl = result.url;
+        uploadTarget.item[uploadTarget.prop || 'imageUrl'] = result.url;
       }
       
     } catch (err: any) {
@@ -58,7 +59,7 @@
       const res = await fetch('/api/save-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ industries, valves })
+        body: JSON.stringify({ industries, valves, siteSettings })
       });
       const result = await res.json();
       if (!result.success) throw new Error(result.error);
@@ -107,6 +108,20 @@
       industries = industries.filter((i: any) => i.id !== id);
     }
   }
+  let isDeploying = $state(false);
+  async function triggerDeploy() {
+    isDeploying = true;
+    try {
+      const res = await fetch('/api/deploy', { method: 'POST' });
+      const result = await res.json();
+      if (!result.success) throw new Error(result.error);
+      alert('Vercel deployment triggered successfully! It will take a minute to update the live site.');
+    } catch (e: any) {
+      alert('Failed to trigger deploy: ' + e.message);
+    } finally {
+      isDeploying = false;
+    }
+  }
 </script>
 
 <svelte:head>
@@ -119,19 +134,31 @@
     <div class="flex items-center gap-6">
       <div class="font-serif text-2xl font-bold text-primary tracking-tight">Seyon CMS</div>
       <div class="flex bg-white/10 rounded-xl p-1 shadow-inner">
-        <button class="px-5 py-2 rounded-lg text-sm font-medium transition-colors {activeTab === 'valves' ? 'bg-primary text-white shadow-md' : 'text-gray-300 hover:text-white'}" onclick={() => activeTab = 'valves'}>
-          💼 Portfolio
+        <button class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm {activeTab === 'valves' ? 'bg-primary text-white shadow-primary/30 border border-primary' : 'bg-white text-dark-gray border border-gray-200 hover:border-gray-300 hover:text-dark'}" onclick={() => activeTab = 'valves'}>
+          Portfolio
         </button>
-        <button class="px-5 py-2 rounded-lg text-sm font-medium transition-colors {activeTab === 'industries' ? 'bg-primary text-white shadow-md' : 'text-gray-300 hover:text-white'}" onclick={() => activeTab = 'industries'}>
-          📝 Industries
+        <button class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm {activeTab === 'industries' ? 'bg-primary text-white shadow-primary/30 border border-primary' : 'bg-white text-dark-gray border border-gray-200 hover:border-gray-300 hover:text-dark'}" onclick={() => activeTab = 'industries'}>
+          Industries
+        </button>
+        <button class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm {activeTab === 'settings' ? 'bg-primary text-white shadow-primary/30 border border-primary' : 'bg-white text-dark-gray border border-gray-200 hover:border-gray-300 hover:text-dark'}" onclick={() => activeTab = 'settings'}>
+          Site Content
         </button>
       </div>
     </div>
     
-    <div class="flex items-center gap-5">
-      <a href="/" target="_blank" class="text-sm font-medium text-gray-300 hover:text-white flex items-center gap-2 transition-colors">
+    <div class="flex items-center gap-4">
+      <button onclick={triggerDeploy} disabled={isDeploying} class="text-sm font-medium text-gray-300 hover:text-white flex items-center gap-2 transition-colors disabled:opacity-50">
+        {#if isDeploying}
+          <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          Deploying...
+        {:else}
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Trigger Deploy
+        {/if}
+      </button>
+      <a href="/" target="_blank" class="text-sm font-medium text-gray-300 hover:text-white flex items-center gap-2 transition-colors ml-2">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-        View Live Site
+        Live Site
       </a>
       <button onclick={saveAll} disabled={isSaving} class="bg-primary hover:bg-primary-hover px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-lg hover:shadow-primary/40 hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-70 disabled:hover:translate-y-0">
         {#if isSaving}
@@ -224,6 +251,11 @@
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Pressure Rating</label>
                     <input bind:value={valve.pressureRating} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
                   </div>
+
+                  <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Temperature Range</label>
+                    <input bind:value={valve.temperatureRange} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                  </div>
                   
                   <div class="md:col-span-2 p-5 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-200 mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
@@ -282,6 +314,122 @@
                  </div>
               </div>
             {/each}
+         </div>
+      </div>
+    {/if}
+
+    {#if activeTab === 'settings'}
+      <div in:fade={{duration: 250, delay: 50}}>
+         <div class="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
+           <div>
+             <h2 class="text-3xl font-bold text-dark">Site Content</h2>
+             <p class="text-dark-gray mt-1">Manage global website texts, contact info, and branding.</p>
+           </div>
+         </div>
+         
+         <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 max-w-3xl">
+            <h3 class="text-xl font-bold text-dark mb-6">Contact & Company Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+              <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Company Name</label>
+                <input bind:value={siteSettings.companyName} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Contact Email</label>
+                <input bind:value={siteSettings.email} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Phone Number</label>
+                <input bind:value={siteSettings.phone} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Physical Address</label>
+                <textarea bind:value={siteSettings.address} rows="2" class="w-full px-4 py-3 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none leading-relaxed"></textarea>
+              </div>
+            </div>
+
+            <h3 class="text-xl font-bold text-dark mb-6 border-t border-gray-100 pt-8">Home Page Content</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Hero Title Text</label>
+                <input bind:value={siteSettings.homeHeroText} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+              </div>
+              
+              <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Hero Background Image</label>
+                <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'homeHeroImage')}>
+                  <img src={siteSettings.homeHeroImage} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Home Hero"/>
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">About Section Image</label>
+                <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'homeAboutImage')}>
+                  <img src={siteSettings.homeAboutImage} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Home About"/>
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="text-xl font-bold text-dark mb-6 border-t border-gray-100 pt-8">About Page Content</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              
+              <div class="md:col-span-2 lg:col-span-3">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Hero Background Image</label>
+                <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutHeroImage')}>
+                  <img src={siteSettings.aboutHeroImage} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="About Hero"/>
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Grid Image 1</label>
+                <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutGridImage1')}>
+                  <img src={siteSettings.aboutGridImage1} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 1"/>
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Grid Image 2</label>
+                <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutGridImage2')}>
+                  <img src={siteSettings.aboutGridImage2} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 2"/>
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Grid Image 3</label>
+                <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutGridImage3')}>
+                  <img src={siteSettings.aboutGridImage3} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 3"/>
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Grid Image 4</label>
+                <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutGridImage4')}>
+                  <img src={siteSettings.aboutGridImage4} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 4"/>
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
          </div>
       </div>
     {/if}

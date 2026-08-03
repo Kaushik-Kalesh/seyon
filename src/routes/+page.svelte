@@ -2,7 +2,7 @@
     import ValveCard from "$lib/components/ValveCard.svelte";
 
     let { data } = $props();
-    let { industries, featuredValves } = $derived(data);
+    let { industries, featuredValves, siteSettings } = $derived(data);
 </script>
 
 <svelte:head>
@@ -15,7 +15,7 @@
 >
     <div class="absolute inset-0 z-0 opacity-40">
         <img
-            src="https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg"
+            src={siteSettings?.homeHeroImage || "https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg"}
             alt="Industrial Facility"
             class="w-full h-full object-cover"
         />
@@ -25,9 +25,7 @@
         <h1
             class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
         >
-            Precision Engineered <br /><span class="text-primary italic"
-                >Industrial Valves</span
-            >
+            {siteSettings?.homeHeroText || 'Precision Engineered Industrial Valves'}
         </h1>
         <p
             class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed"
@@ -58,7 +56,7 @@
         <div class="relative">
             <div class="aspect-square bg-gray-200 rounded-3xl overflow-hidden">
                 <img
-                    src="https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg"
+                    src={siteSettings?.homeAboutImage || "https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg"}
                     alt="About Seyon"
                     class="w-full h-full object-cover"
                 />
