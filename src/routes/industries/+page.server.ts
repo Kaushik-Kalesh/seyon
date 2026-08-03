@@ -1,7 +1,6 @@
-import { db } from '$lib/server/db';
-import { industries } from '$lib/server/db/schema';
+import { getData } from '$lib/server/db';
 
 export async function load() {
-  const allIndustries = await db.select().from(industries);
-  return { industries: allIndustries };
+  const data = await getData();
+  return { industries: data.industries };
 }

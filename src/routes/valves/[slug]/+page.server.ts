@@ -1,11 +1,10 @@
 import { error } from '@sveltejs/kit';
-import { db } from '$lib/server/db';
-import { valves } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { getData } from '$lib/server/db';
 
 export async function load({ params }) {
-  const result = await db.select().from(valves).where(eq(valves.slug, params.slug));
-  const valve = result[0];
+  const data = await getData();
+  
+  const valve = data.valves.find((v: any) => v.slug === params.slug);
   
   if (!valve) {
     error(404, 'Valve not found');
