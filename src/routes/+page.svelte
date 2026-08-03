@@ -25,26 +25,25 @@
         <h1
             class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
         >
-            {siteSettings?.homeHeroText || 'Precision Engineered Industrial Valves'}
+            {siteSettings?.home_hero_title}
         </h1>
         <p
             class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed"
         >
-            Delivering unparalleled reliability and performance for the world's
-            most demanding environments. We set the standard for fluid control.
+            {siteSettings?.home_hero_subtitle}
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a
                 href="/industries"
                 class="px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all hover:scale-105 shadow-lg shadow-primary/25"
             >
-                Explore Solutions
+                {siteSettings?.home_hero_btn1}
             </a>
             <a
                 href="/contact"
                 class="px-8 py-4 bg-white/5 text-white font-medium rounded-full hover:bg-white/10 backdrop-blur-md transition-all hover:scale-105 border border-white/10"
             >
-                Request a Quote
+                {siteSettings?.home_hero_btn2}
             </a>
         </div>
     </div>
@@ -65,32 +64,28 @@
                 class="absolute -bottom-8 -right-8 bg-white p-8 rounded-2xl shadow-xl max-w-xs hidden md:block"
             >
                 <div class="text-4xl font-serif font-bold text-primary mb-2">
-                    25+
+                    {siteSettings?.home_about_stats_number}
                 </div>
                 <div class="text-dark-gray font-medium">
-                    Years of industrial excellence and innovation.
+                    {siteSettings?.home_about_stats_text}
                 </div>
             </div>
         </div>
         <div>
             <h2 class="text-4xl font-bold mb-6 text-dark">
-                Crafting Quality for Critical Applications
+                {siteSettings?.home_about_title}
             </h2>
             <p class="text-lg text-dark-gray mb-6 leading-relaxed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat.
+                {siteSettings?.home_about_desc1}
             </p>
             <p class="text-lg text-dark-gray mb-8 leading-relaxed">
-                Duis aute irure dolor in reprehenderit in voluptate velit esse
-                cillum dolore eu fugiat nulla pariatur.
+                {siteSettings?.home_about_desc2}
             </p>
             <a
                 href="/about"
                 class="inline-flex items-center text-primary font-semibold hover:text-primary-hover group"
             >
-                Read Our Story
+                {siteSettings?.home_about_link}
                 <svg
                     class="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform"
                     fill="none"
@@ -113,17 +108,16 @@
     <div class="page-container">
         <div class="flex justify-between items-end mb-12">
             <div>
-                <h2 class="text-4xl font-bold mb-4">Industries We Serve</h2>
+                <h2 class="text-4xl font-bold mb-4">{siteSettings?.home_industries_title}</h2>
                 <p class="text-gray-400 max-w-xl">
-                    Tailored valve solutions for specialized industrial
-                    requirements.
+                    {siteSettings?.home_industries_subtitle}
                 </p>
             </div>
             <a
                 href="/industries"
                 class="hidden md:inline-flex items-center text-primary hover:text-white transition-colors"
             >
-                View All Industries
+                {siteSettings?.home_industries_link}
                 <svg
                     class="w-5 h-5 ml-2"
                     fill="none"
@@ -174,10 +168,9 @@
 <!-- Featured Products -->
 <section class="page-container py-24">
     <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold text-dark mb-4">Featured Products</h2>
+        <h2 class="text-4xl font-bold text-dark mb-4">{siteSettings?.home_products_title}</h2>
         <p class="text-dark-gray max-w-2xl mx-auto">
-            Discover our most popular industrial valves known for their robust
-            design and longevity.
+            {siteSettings?.home_products_subtitle}
         </p>
     </div>
 

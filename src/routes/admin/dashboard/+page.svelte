@@ -59,34 +59,20 @@
   }
   
   let replaceSearch = $state('');
-  let replaceWith = $state('');
-  let isReplacing = $state(false);
+  
+  // Dictionary Editor State
+  let editingKey = $state<string | null>(null);
+  let editValue = $state('');
 
-  async function handleGlobalReplace() {
-    if (!replaceSearch || !replaceWith) {
-      saveStatus = { type: 'error', message: 'Enter both search and replace text' };
-      setTimeout(() => saveStatus = null, 3000);
-      return;
-    }
-    isReplacing = true;
-    saveStatus = null;
-    try {
-      const res = await fetch('/api/replace-text', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ search: replaceSearch, replace: replaceWith })
-      });
-      const result = await res.json();
-      if (!result.success) throw new Error(result.error);
-      saveStatus = { type: 'success', message: 'Text replaced successfully across the site!' };
-      replaceSearch = '';
-      replaceWith = '';
-      setTimeout(() => saveStatus = null, 3000);
-    } catch (e: any) {
-      saveStatus = { type: 'error', message: e.message };
-      setTimeout(() => saveStatus = null, 3000);
-    } finally {
-      isReplacing = false;
+  function openEditor(key: string) {
+    editingKey = key;
+    editValue = siteSettings[key] || '';
+  }
+
+  function saveEdit() {
+    if (editingKey) {
+      siteSettings[editingKey] = editValue;
+      editingKey = null;
     }
   }
 
@@ -352,113 +338,132 @@
            </div>
          </div>
          
-          <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 max-w-3xl">
-            <h3 class="text-xl font-bold text-dark mb-6">Global Text Replacement</h3>
-            <p class="text-sm text-gray-500 mb-6">Search for any exact text visible on the site and replace it everywhere automatically.</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+          <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 mb-10">
+            <div class="flex justify-between items-center mb-6">
               <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Search For</label>
-                <input bind:value={replaceSearch} placeholder="e.g. Delivering unparalleled reliability" class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                <h3 class="text-xl font-bold text-dark">Text Content Dictionary</h3>
+                <p class="text-sm text-gray-500 mt-1">Search and edit all website text content.</p>
               </div>
-              <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Replace With</label>
-                <div class="flex gap-2">
-                  <input bind:value={replaceWith} placeholder="New text..." class="flex-grow px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-                  <button onclick={handleGlobalReplace} disabled={isReplacing} class="bg-dark hover:bg-black text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md disabled:opacity-70 flex items-center justify-center min-w-[100px]">
-                    {#if isReplacing}
-                      <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    {:else}
-                      Replace All
-                    {/if}
-                  </button>
-                </div>
+              <div class="relative w-72">
+                <input bind:value={replaceSearch} placeholder="Search content..." class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm" />
+                <svg class="w-4 h-4 text-gray-400 absolute left-4 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               </div>
             </div>
 
-            <h3 class="text-xl font-bold text-dark mb-6 border-t border-gray-100 pt-8">Home Page Content</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-              <div class="md:col-span-2">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Hero Title Text</label>
-                <input bind:value={siteSettings.homeHeroText} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-              </div>
-              
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {#each Object.keys(siteSettings).filter(k => !k.includes('Image') && (k.toLowerCase().includes(replaceSearch.toLowerCase()) || (siteSettings[k]||'').toLowerCase().includes(replaceSearch.toLowerCase()))) as key}
+                <div class="border border-gray-100 rounded-xl p-4 hover:border-primary/40 hover:shadow-md transition-all cursor-pointer bg-gray-50 hover:bg-white group" onclick={() => openEditor(key)}>
+                  <div class="text-xs font-bold text-primary mb-2 font-mono break-all">{key}</div>
+                  <div class="text-sm text-dark-gray line-clamp-3 leading-relaxed">{siteSettings[key]}</div>
+                </div>
+              {/each}
+            </div>
+          </div>
+
+          <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 max-w-5xl">
+            <h3 class="text-xl font-bold text-dark mb-6">Global Images</h3>
+            
+            <h4 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Home Page</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Hero Background Image</label>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5">Hero Background</label>
                 <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'homeHeroImage')}>
-                  <img src={siteSettings.homeHeroImage || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Home Hero"/>
+                  <img src={siteSettings.homeHeroImage} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Home Hero"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                    <span class="text-white text-sm font-semibold flex items-center gap-2">Update</span>
                   </div>
                 </div>
               </div>
-
               <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">About Section Image</label>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5">About Section</label>
                 <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'homeAboutImage')}>
-                  <img src={siteSettings.homeAboutImage || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Home About"/>
+                  <img src={siteSettings.homeAboutImage} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Home About"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                    <span class="text-white text-sm font-semibold flex items-center gap-2">Update</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <h3 class="text-xl font-bold text-dark mb-6 border-t border-gray-100 pt-8">About Page Content</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              
-              <div class="md:col-span-2 lg:col-span-3">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Hero Background Image</label>
-                <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutHeroImage')}>
-                  <img src={siteSettings.aboutHeroImage || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="About Hero"/>
+            <h4 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4 border-t border-gray-100 pt-6">About Page</h4>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div class="col-span-2 md:col-span-4">
+                <label class="block text-xs font-bold text-gray-500 mb-1.5">Hero Background</label>
+                <div class="relative w-full h-40 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutHeroImage')}>
+                  <img src={siteSettings.aboutHeroImage} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="About Hero"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                    <span class="text-white text-sm font-semibold flex items-center gap-2">Update</span>
                   </div>
                 </div>
               </div>
-
               <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Grid Image 1</label>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5">Grid Image 1</label>
                 <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutGridImage1')}>
-                  <img src={siteSettings.aboutGridImage1 || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 1"/>
+                  <img src={siteSettings.aboutGridImage1} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 1"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                    <span class="text-white text-sm font-semibold flex items-center gap-2">Update</span>
                   </div>
                 </div>
               </div>
-
               <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Grid Image 2</label>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5">Grid Image 2</label>
                 <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutGridImage2')}>
-                  <img src={siteSettings.aboutGridImage2 || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 2"/>
+                  <img src={siteSettings.aboutGridImage2} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 2"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                    <span class="text-white text-sm font-semibold flex items-center gap-2">Update</span>
                   </div>
                 </div>
               </div>
-
               <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Grid Image 3</label>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5">Grid Image 3</label>
                 <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutGridImage3')}>
-                  <img src={siteSettings.aboutGridImage3 || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 3"/>
+                  <img src={siteSettings.aboutGridImage3} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 3"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                    <span class="text-white text-sm font-semibold flex items-center gap-2">Update</span>
                   </div>
                 </div>
               </div>
-
               <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Grid Image 4</label>
+                <label class="block text-xs font-bold text-gray-500 mb-1.5">Grid Image 4</label>
                 <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'aboutGridImage4')}>
-                  <img src={siteSettings.aboutGridImage4 || 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 4"/>
+                  <img src={siteSettings.aboutGridImage4} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Grid 4"/>
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                    <span class="text-white text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Update Image</span>
+                    <span class="text-white text-sm font-semibold flex items-center gap-2">Update</span>
                   </div>
                 </div>
               </div>
-
             </div>
-         </div>
+          </div>
       </div>
     {/if}
   </main>
 </div>
+
+<!-- Text Edit Modal -->
+{#if editingKey}
+  <div class="fixed inset-0 bg-dark/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full" in:fade={{duration: 150}}>
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold text-dark">Edit Content</h3>
+        <button onclick={() => editingKey = null} class="text-gray-400 hover:text-dark">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      
+      <div class="mb-6">
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Content Key</label>
+        <div class="px-4 py-2.5 font-mono text-sm bg-gray-50 rounded-xl text-primary border border-gray-100">{editingKey}</div>
+      </div>
+
+      <div class="mb-8">
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Value</label>
+        <textarea bind:value={editValue} rows="6" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none text-dark-gray"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button onclick={() => editingKey = null} class="px-6 py-2.5 rounded-full font-bold text-sm text-gray-500 hover:bg-gray-100 transition-colors">Cancel</button>
+        <button onclick={saveEdit} class="bg-primary hover:bg-primary-hover px-6 py-2.5 rounded-full font-bold text-sm text-white transition-all shadow-lg hover:shadow-primary/40 hover:-translate-y-0.5">Update Value</button>
+      </div>
+    </div>
+  </div>
+{/if}

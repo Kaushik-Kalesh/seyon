@@ -1,6 +1,8 @@
 <script lang="ts">
     import { enhance } from "$app/forms";
+    import { page } from "$app/state";
     let { form } = $props();
+    let siteSettings = $derived(page.data.siteSettings || {});
 </script>
 
 <svelte:head>
@@ -15,11 +17,9 @@
             >
                 Let's Connect
             </div>
-            <h1 class="text-5xl font-bold text-dark mb-6">Get in Touch</h1>
+            <h1 class="text-5xl font-bold text-dark mb-6">{siteSettings.contact_hero_title}</h1>
             <p class="text-xl text-dark-gray">
-                Ready to discuss your valve requirements? Our engineering team
-                is here to help you find the perfect solution for your
-                application.
+                {siteSettings.contact_hero_subtitle}
             </p>
         </div>
 
@@ -63,12 +63,9 @@
                             >
                         </div>
                         <div>
-                            <h4 class="font-bold text-xl mb-2">Headquarters</h4>
-                            <p class="text-gray-300 leading-relaxed">
-                                S/O Mathialagan, 1/E 388A, 19th street<br />Thai
-                                moogambigai nagar, Madambakkam<br
-                                />Kancheepuram, Tamil Nadu, India-603202
-                            </p>
+                            <h4 class="font-bold text-xl mb-2">{siteSettings.contact_info_title}</h4>
+                            <p class="text-gray-300 leading-relaxed font-bold mb-1">{siteSettings.contact_info_company}</p>
+                            <p class="text-gray-300 leading-relaxed whitespace-pre-wrap">{siteSettings.contact_info_address || siteSettings.address}</p>
                         </div>
                     </div>
 
@@ -90,9 +87,9 @@
                             >
                         </div>
                         <div>
-                            <h4 class="font-bold text-xl mb-2">Email Us</h4>
+                            <h4 class="font-bold text-xl mb-2">{siteSettings.contact_info_email_title}</h4>
                             <p class="text-gray-300 leading-relaxed">
-                                sales@seyonflo.in
+                                {siteSettings.contact_info_email || siteSettings.email}
                             </p>
                         </div>
                     </div>
@@ -115,9 +112,9 @@
                             >
                         </div>
                         <div>
-                            <h4 class="font-bold text-xl mb-2">Call Us</h4>
+                            <h4 class="font-bold text-xl mb-2">{siteSettings.contact_info_phone_title}</h4>
                             <p class="text-gray-300 leading-relaxed">
-                                +91 98847 25066
+                                {siteSettings.contact_info_phone || siteSettings.phone}
                             </p>
                         </div>
                     </div>
@@ -148,7 +145,7 @@
                 class="bg-white p-10 md:p-12 rounded-3xl shadow-xl border border-gray-100 flex flex-col justify-center"
             >
                 <h3 class="text-3xl font-serif font-bold text-dark mb-8">
-                    Send a Message
+                    {siteSettings.contact_form_title}
                 </h3>
 
                 {#if form?.success}
@@ -226,7 +223,7 @@
                         type="submit"
                         class="w-full bg-dark text-white font-bold text-lg py-4 rounded-xl hover:bg-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/30 mt-2"
                     >
-                        Submit Inquiry
+                        {siteSettings.contact_form_button}
                     </button>
                 </form>
             </div>

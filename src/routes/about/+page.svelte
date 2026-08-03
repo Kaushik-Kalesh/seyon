@@ -12,9 +12,9 @@
     <img src={siteSettings.aboutHeroImage || "https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg"} alt="Background" class="w-full h-full object-cover" />
   </div>
   <div class="page-container relative z-10 text-center">
-    <h1 class="text-5xl font-bold mb-6">About Seyon</h1>
+    <h1 class="text-5xl font-bold mb-6">{siteSettings.about_hero_title}</h1>
     <p class="text-xl text-gray-300 max-w-2xl mx-auto">
-      Decades of engineering excellence, delivering the world's most reliable industrial valves.
+      {siteSettings.about_hero_subtitle}
     </p>
   </div>
 </div>
@@ -22,21 +22,21 @@
 <section class="page-container py-24">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
     <div>
-      <h2 class="text-4xl font-bold text-dark mb-6">Our Legacy of Innovation</h2>
+      <h2 class="text-4xl font-bold text-dark mb-6">{siteSettings.about_legacy_title}</h2>
       <p class="text-lg text-dark-gray mb-6 leading-relaxed">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        {siteSettings.about_legacy_desc1}
       </p>
       <p class="text-lg text-dark-gray mb-6 leading-relaxed">
-        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        {siteSettings.about_legacy_desc2}
       </p>
       <div class="grid grid-cols-2 gap-8 mt-12">
         <div class="border-l-4 border-primary pl-4">
-          <div class="text-3xl font-bold text-dark mb-1">50+</div>
-          <div class="text-sm text-dark-gray font-medium uppercase tracking-wider">Countries Served</div>
+          <div class="text-3xl font-bold text-dark mb-1">{siteSettings.about_stats1_number}</div>
+          <div class="text-sm text-dark-gray font-medium uppercase tracking-wider">{siteSettings.about_stats1_text}</div>
         </div>
         <div class="border-l-4 border-primary pl-4">
-          <div class="text-3xl font-bold text-dark mb-1">10k+</div>
-          <div class="text-sm text-dark-gray font-medium uppercase tracking-wider">Installations</div>
+          <div class="text-3xl font-bold text-dark mb-1">{siteSettings.about_stats2_number}</div>
+          <div class="text-sm text-dark-gray font-medium uppercase tracking-wider">{siteSettings.about_stats2_text}</div>
         </div>
       </div>
     </div>
