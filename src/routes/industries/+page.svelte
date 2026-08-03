@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { industries } from '$lib/data/mock';
+  let { data } = $props();
+  let { industries } = $derived(data);
 </script>
 
 <svelte:head>

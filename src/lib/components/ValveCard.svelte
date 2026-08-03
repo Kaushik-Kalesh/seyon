@@ -1,6 +1,5 @@
 <script lang="ts">
-  import type { Valve } from '$lib/data/mock';
-  let { valve } = $props<{ valve: Valve }>();
+  let { valve } = $props<{ valve: any }>();
 </script>
 
 <a href={`/valves/${valve.slug}`} class="group block relative overflow-hidden rounded-xl shadow-md hover-lift bg-white border border-gray-100">

@@ -105,7 +105,7 @@
                             /></svg
                         >
                         <span class="leading-relaxed"
-                            >1/E 388A, 19TH STREET, THAI MOOGAMBIGAI NAGAR,
+                            >1/E 388A, 19th street, Thai moogambigai nagar,
                             Madambakkam, Kancheepuram, Tamil Nadu 603202</span
                         >
                     </li>

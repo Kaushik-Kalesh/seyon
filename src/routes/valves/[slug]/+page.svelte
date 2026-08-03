@@ -62,19 +62,19 @@
           <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
             <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
               <dt class="text-sm font-medium text-dark-gray mb-1">Material</dt>
-              <dd class="text-base font-semibold text-dark">{valve.specs.material}</dd>
+              <dd class="text-base font-semibold text-dark">{valve.material}</dd>
             </div>
             <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
               <dt class="text-sm font-medium text-dark-gray mb-1">Pressure Rating</dt>
-              <dd class="text-base font-semibold text-dark">{valve.specs.pressureRating}</dd>
+              <dd class="text-base font-semibold text-dark">{valve.pressureRating}</dd>
             </div>
             <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
               <dt class="text-sm font-medium text-dark-gray mb-1">Temperature Range</dt>
-              <dd class="text-base font-semibold text-dark">{valve.specs.temperatureRange}</dd>
+              <dd class="text-base font-semibold text-dark">{valve.temperatureRange}</dd>
             </div>
             <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
               <dt class="text-sm font-medium text-dark-gray mb-1">Available Sizes</dt>
-              <dd class="text-base font-semibold text-dark">{valve.specs.size}</dd>
+              <dd class="text-base font-semibold text-dark">{valve.size}</dd>
             </div>
           </dl>
         </div>
@@ -83,9 +83,11 @@
           <a href="/contact" class="flex-1 bg-primary text-white text-center py-4 rounded-xl font-semibold hover:bg-primary-hover hover:-translate-y-1 transition-all duration-300 shadow-lg shadow-primary/30">
             Request Quote
           </a>
-          <button class="px-6 py-4 rounded-xl font-semibold border border-gray-200 text-dark hover:border-dark hover:bg-gray-50 transition-colors flex items-center justify-center">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-          </button>
+          {#if valve.pdfUrl}
+            <a href={valve.pdfUrl} target="_blank" class="px-6 py-4 rounded-xl font-semibold border border-gray-200 text-dark hover:border-dark hover:bg-gray-50 transition-colors flex items-center justify-center" title="Download PDF">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            </a>
+          {/if}
         </div>
       </div>
     </div>
