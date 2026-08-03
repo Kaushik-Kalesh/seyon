@@ -25,6 +25,44 @@
       isSaving = false;
     }
   }
+
+  function addValve() {
+    valves = [{
+      id: crypto.randomUUID(),
+      slug: 'new-valve-' + Date.now(),
+      name: 'New Valve',
+      industrySlug: industries[0]?.slug || 'oil-and-gas',
+      description: '',
+      imageUrl: 'https://via.placeholder.com/500',
+      material: '',
+      pressureRating: '',
+      temperatureRange: '',
+      size: '',
+      pdfUrl: null
+    }, ...valves];
+  }
+
+  function deleteValve(id: string) {
+    if(confirm('Are you sure you want to delete this valve?')) {
+      valves = valves.filter((v: any) => v.id !== id);
+    }
+  }
+
+  function addIndustry() {
+    industries = [...industries, {
+      id: crypto.randomUUID(),
+      slug: 'new-industry-' + Date.now(),
+      name: 'New Industry',
+      description: '',
+      imageUrl: 'https://via.placeholder.com/500'
+    }];
+  }
+
+  function deleteIndustry(id: string) {
+    if(confirm('Are you sure you want to delete this industry?')) {
+      industries = industries.filter((i: any) => i.id !== id);
+    }
+  }
 </script>
 
 <svelte:head>
@@ -72,7 +110,7 @@
             <h2 class="text-3xl font-bold text-dark">Valve Portfolio Manager</h2>
             <p class="text-dark-gray mt-1">Manage technical specifications, descriptions, and PDFs for your products.</p>
           </div>
-          <button class="text-primary font-bold hover:text-primary-hover hover:underline decoration-2 underline-offset-4 flex items-center gap-1 transition-colors">
+          <button onclick={addValve} class="text-primary font-bold hover:text-primary-hover hover:underline decoration-2 underline-offset-4 flex items-center gap-1 transition-colors">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
             Add New Valve
           </button>
@@ -82,7 +120,7 @@
           {#each valves as valve}
             <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 transition-all hover:border-gray-300 relative overflow-hidden group">
               <!-- Delete button appearing on hover -->
-              <button class="absolute top-4 right-4 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all" title="Delete Valve">
+              <button onclick={() => deleteValve(valve.id)} class="absolute top-4 right-4 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-10" title="Delete Valve">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
               </button>
 
@@ -160,11 +198,18 @@
              <h2 class="text-3xl font-bold text-dark">Industries Manager</h2>
              <p class="text-dark-gray mt-1">Manage industry categories and their showcase images.</p>
            </div>
+           <button onclick={addIndustry} class="text-primary font-bold hover:text-primary-hover hover:underline decoration-2 underline-offset-4 flex items-center gap-1 transition-colors">
+             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+             Add Industry
+           </button>
          </div>
          
          <div class="grid gap-8 md:grid-cols-2">
             {#each industries as industry}
-              <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col group">
+              <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col group relative">
+                 <button onclick={() => deleteIndustry(industry.id)} class="absolute top-4 right-4 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-10" title="Delete Industry">
+                   <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                 </button>
                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Industry Name</label>
                  <input bind:value={industry.name} class="w-full px-4 py-2.5 text-xl font-bold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none mb-4" />
                  

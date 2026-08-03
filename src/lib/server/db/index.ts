@@ -1,8 +1,12 @@
 import { Redis } from '@upstash/redis';
 
-// Initialize the Redis client using environment variables
-// It automatically picks up UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN
-const redis = process.env.UPSTASH_REDIS_REST_URL ? Redis.fromEnv() : null;
+// Vercel sometimes uses a specific prefix when generating these through the marketplace
+const upstashUrl = process.env.UPSTASH_REDIS_REST_KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const upstashToken = process.env.UPSTASH_REDIS_REST_KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+
+const redis = (upstashUrl && upstashToken) 
+  ? new Redis({ url: upstashUrl, token: upstashToken }) 
+  : null;
 
 export async function getData(): Promise<{ industries: any[], valves: any[] }> {
   // During local development without Redis configured, return empty arrays
