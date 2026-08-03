@@ -41,7 +41,7 @@
       </div>
     </form>
     
-    <a href="/" class="mt-8 text-sm text-gray-400 hover:text-dark transition-colors inline-block">
+    <a href="/" class="mt-2 text-sm text-gray-400 hover:text-dark transition-colors inline-block">
       &larr; Back to Website
     </a>
   </div>

@@ -51,11 +51,45 @@
       setTimeout(() => saveStatus = null, 3000);
     } finally {
       isUploading = false;
+      saveStatus = { type: 'success', message: 'Image uploaded successfully! Remember to Save.' };
+      setTimeout(() => saveStatus = null, 3000);
       uploadTarget = null;
       input.value = ''; // Reset input
     }
   }
   
+  let replaceSearch = $state('');
+  let replaceWith = $state('');
+  let isReplacing = $state(false);
+
+  async function handleGlobalReplace() {
+    if (!replaceSearch || !replaceWith) {
+      saveStatus = { type: 'error', message: 'Enter both search and replace text' };
+      setTimeout(() => saveStatus = null, 3000);
+      return;
+    }
+    isReplacing = true;
+    saveStatus = null;
+    try {
+      const res = await fetch('/api/replace-text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ search: replaceSearch, replace: replaceWith })
+      });
+      const result = await res.json();
+      if (!result.success) throw new Error(result.error);
+      saveStatus = { type: 'success', message: 'Text replaced successfully across the site!' };
+      replaceSearch = '';
+      replaceWith = '';
+      setTimeout(() => saveStatus = null, 3000);
+    } catch (e: any) {
+      saveStatus = { type: 'error', message: e.message };
+      setTimeout(() => saveStatus = null, 3000);
+    } finally {
+      isReplacing = false;
+    }
+  }
+
   async function saveAll() {
     isSaving = true;
     saveStatus = null;
@@ -94,9 +128,14 @@
     }, ...valves];
   }
 
+  let deleteConfirmValve = $state<string | null>(null);
   function deleteValve(id: string) {
-    if(confirm('Are you sure you want to delete this valve?')) {
+    if (deleteConfirmValve === id) {
       valves = valves.filter((v: any) => v.id !== id);
+      deleteConfirmValve = null;
+    } else {
+      deleteConfirmValve = id;
+      setTimeout(() => { if (deleteConfirmValve === id) deleteConfirmValve = null; }, 3000);
     }
   }
 
@@ -110,9 +149,14 @@
     }];
   }
 
+  let deleteConfirmIndustry = $state<string | null>(null);
   function deleteIndustry(id: string) {
-    if(confirm('Are you sure you want to delete this industry?')) {
+    if (deleteConfirmIndustry === id) {
       industries = industries.filter((i: any) => i.id !== id);
+      deleteConfirmIndustry = null;
+    } else {
+      deleteConfirmIndustry = id;
+      setTimeout(() => { if (deleteConfirmIndustry === id) deleteConfirmIndustry = null; }, 3000);
     }
   }
 </script>
@@ -164,14 +208,6 @@
   <!-- Hidden file input for uploads -->
   <input type="file" bind:this={fileInputRef} onchange={handleFileUpload} accept={uploadTarget?.type === 'pdf' ? '.pdf' : 'image/*'} class="hidden" />
 
-  <!-- Full screen loading overlay for uploads -->
-  {#if isUploading}
-    <div class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[100] flex flex-col items-center justify-center">
-      <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4"></div>
-      <h3 class="text-xl font-bold text-dark">Uploading to Cloudinary...</h3>
-    </div>
-  {/if}
-  
   <!-- Main Content Area -->
   <main class="flex-grow p-8 max-w-7xl mx-auto w-full">
     {#if activeTab === 'valves'}
@@ -191,8 +227,8 @@
           {#each valves as valve}
             <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 transition-all hover:border-gray-300 relative overflow-hidden group">
               <!-- Delete button appearing on hover -->
-              <button onclick={() => deleteValve(valve.id)} class="absolute top-4 right-4 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-10" title="Delete Valve">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <button onclick={() => deleteValve(valve.id)} class="absolute top-4 right-4 text-sm {deleteConfirmValve === valve.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all z-10 font-medium">
+                {deleteConfirmValve === valve.id ? 'Confirm?' : 'Delete'}
               </button>
 
               <div class="flex flex-col md:flex-row gap-8">
@@ -283,8 +319,8 @@
          <div class="grid gap-8 md:grid-cols-2">
             {#each industries as industry}
               <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col group relative">
-                 <button onclick={() => deleteIndustry(industry.id)} class="absolute top-4 right-4 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-10" title="Delete Industry">
-                   <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                 <button onclick={() => deleteIndustry(industry.id)} class="absolute top-4 right-4 text-sm {deleteConfirmIndustry === industry.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all z-10 font-medium">
+                   {deleteConfirmIndustry === industry.id ? 'Confirm?' : 'Delete'}
                  </button>
                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Industry Name</label>
                  <input bind:value={industry.name} class="w-full px-4 py-2.5 text-xl font-bold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none mb-4" />
@@ -316,24 +352,26 @@
            </div>
          </div>
          
-         <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 max-w-3xl">
-            <h3 class="text-xl font-bold text-dark mb-6">Contact & Company Information</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 max-w-3xl">
+            <h3 class="text-xl font-bold text-dark mb-6">Global Text Replacement</h3>
+            <p class="text-sm text-gray-500 mb-6">Search for any exact text visible on the site and replace it everywhere automatically.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
               <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Company Name</label>
-                <input bind:value={siteSettings.companyName} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Search For</label>
+                <input bind:value={replaceSearch} placeholder="e.g. Delivering unparalleled reliability" class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
               </div>
               <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Contact Email</label>
-                <input bind:value={siteSettings.email} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Phone Number</label>
-                <input bind:value={siteSettings.phone} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-              </div>
-              <div class="md:col-span-2">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Physical Address</label>
-                <textarea bind:value={siteSettings.address} rows="2" class="w-full px-4 py-3 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none leading-relaxed"></textarea>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Replace With</label>
+                <div class="flex gap-2">
+                  <input bind:value={replaceWith} placeholder="New text..." class="flex-grow px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                  <button onclick={handleGlobalReplace} disabled={isReplacing} class="bg-dark hover:bg-black text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md disabled:opacity-70 flex items-center justify-center min-w-[100px]">
+                    {#if isReplacing}
+                      <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    {:else}
+                      Replace All
+                    {/if}
+                  </button>
+                </div>
               </div>
             </div>
 
