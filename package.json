@@ -24,6 +24,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@upstash/redis": "^1.38.1"
+		"@upstash/redis": "^1.38.1",
+		"cloudinary": "^2.10.0"
 	}
 }

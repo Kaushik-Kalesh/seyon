@@ -8,6 +8,50 @@
   let activeTab = $state('valves');
   let isSaving = $state(false);
   
+  let fileInputRef: HTMLInputElement;
+  let isUploading = $state(false);
+  let uploadTarget = $state<{type: 'image'|'pdf', item: any} | null>(null);
+
+  function triggerUpload(type: 'image'|'pdf', item: any) {
+    uploadTarget = { type, item };
+    fileInputRef.click();
+  }
+
+  async function handleFileUpload(e: Event) {
+    const input = e.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0 || !uploadTarget) return;
+
+    const file = input.files[0];
+    isUploading = true;
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', uploadTarget.type);
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const result = await res.json();
+      
+      if (!result.success) throw new Error(result.error);
+      
+      if (uploadTarget.type === 'pdf') {
+        uploadTarget.item.pdfUrl = result.url;
+      } else if (uploadTarget.type === 'image') {
+        uploadTarget.item.imageUrl = result.url;
+      }
+      
+    } catch (err: any) {
+      alert('Upload failed: ' + err.message);
+    } finally {
+      isUploading = false;
+      uploadTarget = null;
+      input.value = ''; // Reset input
+    }
+  }
+  
   async function saveAll() {
     isSaving = true;
     try {
@@ -101,6 +145,17 @@
     </div>
   </header>
   
+  <!-- Hidden file input for uploads -->
+  <input type="file" bind:this={fileInputRef} onchange={handleFileUpload} accept={uploadTarget?.type === 'pdf' ? '.pdf' : 'image/*'} class="hidden" />
+
+  <!-- Full screen loading overlay for uploads -->
+  {#if isUploading}
+    <div class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[100] flex flex-col items-center justify-center">
+      <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4"></div>
+      <h3 class="text-xl font-bold text-dark">Uploading to Cloudinary...</h3>
+    </div>
+  {/if}
+  
   <!-- Main Content Area -->
   <main class="flex-grow p-8 max-w-7xl mx-auto w-full">
     {#if activeTab === 'valves'}
@@ -125,7 +180,7 @@
               </button>
 
               <div class="flex flex-col md:flex-row gap-8">
-                <div class="w-full md:w-48 h-48 bg-gray-50 rounded-2xl overflow-hidden shrink-0 border border-gray-200 relative group/img cursor-pointer">
+                <div class="w-full md:w-48 h-48 bg-gray-50 rounded-2xl overflow-hidden shrink-0 border border-gray-200 relative group/img cursor-pointer" onclick={() => triggerUpload('image', valve)}>
                   <img src={valve.imageUrl} alt={valve.name} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" />
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                     <span class="text-white text-sm font-semibold flex items-center gap-2">
@@ -178,7 +233,7 @@
                       </h4>
                       <p class="text-sm text-gray-500 mt-1">{valve.pdfUrl ? 'PDF document attached and ready for download.' : 'No specification sheet uploaded yet.'}</p>
                     </div>
-                    <button class="px-5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm font-bold text-dark hover:bg-gray-50 hover:border-dark transition-all shadow-sm shrink-0 flex items-center justify-center gap-2">
+                    <button onclick={() => triggerUpload('pdf', valve)} class="px-5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm font-bold text-dark hover:bg-gray-50 hover:border-dark transition-all shadow-sm shrink-0 flex items-center justify-center gap-2">
                       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                       {valve.pdfUrl ? 'Replace PDF' : 'Upload PDF'}
                     </button>
@@ -216,7 +271,7 @@
                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
                  <textarea bind:value={industry.description} rows="3" class="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none mb-6 resize-none leading-relaxed"></textarea>
                  
-                 <div class="relative w-full h-48 rounded-xl overflow-hidden border border-gray-200 mt-auto cursor-pointer group/img">
+                 <div class="relative w-full h-48 rounded-xl overflow-hidden border border-gray-200 mt-auto cursor-pointer group/img" onclick={() => triggerUpload('image', industry)}>
                    <img src={industry.imageUrl} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt={industry.name}/>
                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                      <span class="text-white text-sm font-semibold flex items-center gap-2">
