@@ -108,20 +108,6 @@
       industries = industries.filter((i: any) => i.id !== id);
     }
   }
-  let isDeploying = $state(false);
-  async function triggerDeploy() {
-    isDeploying = true;
-    try {
-      const res = await fetch('/api/deploy', { method: 'POST' });
-      const result = await res.json();
-      if (!result.success) throw new Error(result.error);
-      alert('Vercel deployment triggered successfully! It will take a minute to update the live site.');
-    } catch (e: any) {
-      alert('Failed to trigger deploy: ' + e.message);
-    } finally {
-      isDeploying = false;
-    }
-  }
 </script>
 
 <svelte:head>
@@ -134,28 +120,19 @@
     <div class="flex items-center gap-6">
       <div class="font-serif text-2xl font-bold text-primary tracking-tight">Seyon CMS</div>
       <div class="flex bg-white/10 rounded-xl p-1 shadow-inner">
-        <button class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm {activeTab === 'valves' ? 'bg-primary text-white shadow-primary/30 border border-primary' : 'bg-white text-dark-gray border border-gray-200 hover:border-gray-300 hover:text-dark'}" onclick={() => activeTab = 'valves'}>
+        <button class="px-5 py-2.5 rounded-lg text-sm font-medium transition-colors {activeTab === 'valves' ? 'bg-primary text-white shadow-md' : 'text-gray-300 hover:text-white'}" onclick={() => activeTab = 'valves'}>
           Portfolio
         </button>
-        <button class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm {activeTab === 'industries' ? 'bg-primary text-white shadow-primary/30 border border-primary' : 'bg-white text-dark-gray border border-gray-200 hover:border-gray-300 hover:text-dark'}" onclick={() => activeTab = 'industries'}>
+        <button class="px-5 py-2.5 rounded-lg text-sm font-medium transition-colors {activeTab === 'industries' ? 'bg-primary text-white shadow-md' : 'text-gray-300 hover:text-white'}" onclick={() => activeTab = 'industries'}>
           Industries
         </button>
-        <button class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm {activeTab === 'settings' ? 'bg-primary text-white shadow-primary/30 border border-primary' : 'bg-white text-dark-gray border border-gray-200 hover:border-gray-300 hover:text-dark'}" onclick={() => activeTab = 'settings'}>
+        <button class="px-5 py-2.5 rounded-lg text-sm font-medium transition-colors {activeTab === 'settings' ? 'bg-primary text-white shadow-md' : 'text-gray-300 hover:text-white'}" onclick={() => activeTab = 'settings'}>
           Site Content
         </button>
       </div>
     </div>
     
     <div class="flex items-center gap-4">
-      <button onclick={triggerDeploy} disabled={isDeploying} class="text-sm font-medium text-gray-300 hover:text-white flex items-center gap-2 transition-colors disabled:opacity-50">
-        {#if isDeploying}
-          <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-          Deploying...
-        {:else}
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          Trigger Deploy
-        {/if}
-      </button>
       <a href="/" target="_blank" class="text-sm font-medium text-gray-300 hover:text-white flex items-center gap-2 transition-colors ml-2">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
         Live Site
