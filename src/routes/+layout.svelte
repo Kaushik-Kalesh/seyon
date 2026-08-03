@@ -5,7 +5,8 @@
   import { page } from '$app/state';
   import { fly, fade } from 'svelte/transition';
   
-  let { children } = $props();
+  let { data, children } = $props();
+  let siteSettings = $derived(data?.siteSettings || {});
   
   let isAdmin = $derived(page.url.pathname.startsWith('/admin'));
 </script>
@@ -15,6 +16,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- OpenGraph -->
+  <meta property="og:title" content={siteSettings.og_title} />
+  <meta property="og:description" content={siteSettings.og_description} />
+  <meta property="og:image" content="{page.url.origin}/logo.png" />
+  <meta property="og:url" content={page.url.href} />
+  <meta property="og:type" content="website" />
 </svelte:head>
 
 {#if isAdmin}

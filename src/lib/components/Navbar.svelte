@@ -1,5 +1,8 @@
 <script lang="ts">
     import { page } from "$app/state";
+    import { slide } from 'svelte/transition';
+
+    let isMobileMenuOpen = $state(false);
 
     const links = [
         { name: "Home", href: "/" },
@@ -54,23 +57,49 @@
             <!-- Mobile menu button -->
             <div class="md:hidden flex items-center">
                 <button
-                    class="text-dark-gray hover:text-dark focus:outline-none"
+                    onclick={() => isMobileMenuOpen = !isMobileMenuOpen}
+                    class="text-dark-gray hover:text-dark focus:outline-none p-2"
                 >
-                    <svg
-                        class="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16"
-                        />
-                    </svg>
+                    {#if isMobileMenuOpen}
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    {:else}
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    {/if}
                 </button>
             </div>
         </div>
     </div>
+
+    <!-- Mobile Menu Dropdown -->
+    {#if isMobileMenuOpen}
+        <div class="md:hidden bg-white border-b border-gray-100 shadow-sm" transition:slide={{ duration: 250 }}>
+            <div class="px-4 pt-2 pb-6 space-y-1">
+                {#each links as link}
+                    <a
+                        href={link.href}
+                        onclick={() => isMobileMenuOpen = false}
+                        class="block px-3 py-3 text-base font-medium rounded-xl transition-colors
+                            {page.url.pathname === link.href
+                                ? 'bg-primary/10 text-primary'
+                                : 'text-dark-gray hover:bg-gray-50 hover:text-dark'}"
+                    >
+                        {link.name}
+                    </a>
+                {/each}
+                <div class="pt-4 pb-2">
+                    <a
+                        href="/contact"
+                        onclick={() => isMobileMenuOpen = false}
+                        class="block w-full text-center px-6 py-3 bg-dark text-white text-base font-medium rounded-full hover:bg-primary transition-colors shadow-md"
+                    >
+                        Contact
+                    </a>
+                </div>
+            </div>
+        </div>
+    {/if}
 </nav>

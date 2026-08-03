@@ -32,6 +32,10 @@ export async function getData(): Promise<{ industries: any[], valves: any[], sit
         aboutGridImage3: 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg', 
         aboutGridImage4: 'https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg',
         
+        // Global SEO & OpenGraph
+        og_title: 'Seyon | Premium Industrial Valves',
+        og_description: 'Precision Engineered Industrial Valves. Delivering unparalleled reliability and performance for the world\'s most demanding environments.',
+
         // Home Page Texts
         home_hero_title: 'Precision Engineered Industrial Valves',
         home_hero_subtitle: "Delivering unparalleled reliability and performance for the world's most demanding environments. We set the standard for fluid control.",
