@@ -229,9 +229,14 @@
                 </div>
                 
                 <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                  <div class="md:col-span-2">
+                  <div class="md:col-span-1">
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Valve Name</label>
                     <input bind:value={valve.name} class="w-full px-4 py-2.5 text-lg font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                  </div>
+                  
+                  <div class="md:col-span-1">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">URL Slug</label>
+                    <input bind:value={valve.slug} class="w-full px-4 py-2.5 font-medium font-mono text-sm bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
                   </div>
                   
                   <div class="md:col-span-2">
@@ -308,8 +313,25 @@
                  <button onclick={() => deleteIndustry(industry.id)} class="absolute top-4 right-4 text-sm {deleteConfirmIndustry === industry.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all z-10 font-medium">
                    {deleteConfirmIndustry === industry.id ? 'Confirm?' : 'Delete'}
                  </button>
-                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Industry Name</label>
-                 <input bind:value={industry.name} class="w-full px-4 py-2.5 text-xl font-bold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none mb-4" />
+                 <div class="flex gap-4 mb-4">
+                   <div class="flex-grow">
+                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Industry Name</label>
+                     <input bind:value={industry.name} class="w-full px-4 py-2.5 text-xl font-bold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                   </div>
+                   <div class="w-1/3">
+                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">URL Slug</label>
+                     <input value={industry.slug} oninput={(e) => {
+                       const newSlug = e.currentTarget.value;
+                       const oldSlug = industry.slug;
+                       industry.slug = newSlug;
+                       valves.forEach(v => {
+                         if (v.industrySlug === oldSlug) {
+                           v.industrySlug = newSlug;
+                         }
+                       });
+                     }} class="w-full px-4 py-2.5 font-medium font-mono text-sm bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                   </div>
+                 </div>
                  
                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
                  <textarea bind:value={industry.description} rows="3" class="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none mb-6 resize-none leading-relaxed"></textarea>
@@ -351,12 +373,19 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {#each Object.keys(siteSettings).filter(k => !k.includes('Image') && (k.toLowerCase().includes(replaceSearch.toLowerCase()) || (siteSettings[k]||'').toLowerCase().includes(replaceSearch.toLowerCase()))) as key}
-                <div class="border border-gray-100 rounded-xl p-4 hover:border-primary/40 hover:shadow-md transition-all cursor-pointer bg-gray-50 hover:bg-white group" onclick={() => openEditor(key)}>
-                  <div class="text-xs font-bold text-primary mb-2 font-mono break-all">{key}</div>
-                  <div class="text-sm text-dark-gray line-clamp-3 leading-relaxed">{siteSettings[key]}</div>
+              {#if replaceSearch.trim().length > 0}
+                {#each Object.keys(siteSettings).filter(k => !k.includes('Image') && (k.toLowerCase().includes(replaceSearch.toLowerCase()) || (siteSettings[k]||'').toLowerCase().includes(replaceSearch.toLowerCase()))) as key}
+                  <div class="border border-gray-100 rounded-xl p-4 hover:border-primary/40 hover:shadow-md transition-all cursor-pointer bg-gray-50 hover:bg-white group" onclick={() => openEditor(key)}>
+                    <div class="text-xs font-bold text-primary mb-2 font-mono break-all">{key}</div>
+                    <div class="text-sm text-dark-gray line-clamp-3 leading-relaxed">{siteSettings[key]}</div>
+                  </div>
+                {/each}
+              {:else}
+                <div class="col-span-full py-16 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                  <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                  <p class="text-gray-500 font-medium">Type in the search box to find and edit text content.</p>
                 </div>
-              {/each}
+              {/if}
             </div>
           </div>
 
