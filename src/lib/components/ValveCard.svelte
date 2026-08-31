@@ -2,7 +2,7 @@
   let { valve } = $props<{ valve: any }>();
 </script>
 
-<a href={`/valves/${valve.slug}`} class="group block relative overflow-hidden rounded-xl shadow-md hover-lift bg-white border border-gray-100">
+<a href={`/products/${valve.slug}`} class="group block relative overflow-hidden rounded-xl shadow-md hover-lift bg-white border border-gray-100">
   <div class="aspect-[4/3] overflow-hidden bg-gray-100 relative">
     <img 
       src={valve.imageUrl} 
@@ -18,7 +18,7 @@
   </div>
   <div class="p-6 relative z-10 bg-white">
     <div class="text-xs font-semibold text-primary uppercase tracking-wider mb-2">
-      {valve.industrySlug.replace(/-/g, ' ')}
+      {(valve.categorySlug || valve.industrySlug || '').replace(/-/g, ' ')}
     </div>
     <h3 class="text-xl font-serif font-bold text-dark mb-2 group-hover:text-primary transition-colors duration-300">
       {valve.name}

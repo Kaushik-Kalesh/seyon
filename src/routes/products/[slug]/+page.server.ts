@@ -4,11 +4,11 @@ import { getData } from '$lib/server/db';
 export async function load({ params }) {
   const data = await getData();
   
-  const valve = data.valves.find((v: any) => v.slug === params.slug);
+  const product = data.products.find((v: any) => v.slug === params.slug);
   
-  if (!valve) {
-    error(404, 'Valve not found');
+  if (!product) {
+    error(404, 'Product not found');
   }
   
-  return { valve };
+  return { product };
 }

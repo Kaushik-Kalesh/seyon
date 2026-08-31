@@ -22,21 +22,17 @@
 <section class="page-container py-24">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
     {#each industries as industry, i}
-      <a href={`/industries/${industry.slug}`} class="group block relative rounded-2xl overflow-hidden h-96 hover-lift">
-        <img src={industry.imageUrl} alt={industry.name} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-        <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/40 to-transparent transition-opacity duration-300 group-hover:from-dark group-hover:via-dark/60"></div>
+      <div class="block relative rounded-2xl overflow-hidden h-96">
+        <img src={industry.imageUrl} alt={industry.name} class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/40 to-transparent"></div>
         <div class="absolute bottom-0 left-0 p-8 w-full">
-          <div class="text-primary font-bold text-5xl opacity-50 mb-2 transition-opacity group-hover:opacity-100">0{i + 1}</div>
-          <h2 class="text-3xl font-serif font-bold text-white mb-4 group-hover:text-primary transition-colors">{industry.name}</h2>
-          <p class="text-gray-300 text-lg line-clamp-2 transform transition-all duration-300 group-hover:translate-y-0 translate-y-2 opacity-80 group-hover:opacity-100">
+          <div class="text-primary font-bold text-5xl opacity-50 mb-2">0{i + 1}</div>
+          <h2 class="text-3xl font-serif font-bold text-white mb-4">{industry.name}</h2>
+          <p class="text-gray-300 text-lg opacity-80">
             {industry.description}
           </p>
-          <div class="mt-6 flex items-center text-primary font-medium opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-            Explore Solutions
-            <svg class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-          </div>
         </div>
-      </a>
+      </div>
     {/each}
   </div>
 </section>

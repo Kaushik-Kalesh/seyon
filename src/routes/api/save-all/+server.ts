@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { saveData } from '$lib/server/db';
+import { saveData, getData } from '$lib/server/db';
 
 export async function POST({ request, cookies }) {
   if (cookies.get('admin_auth_token') !== 'true') {
@@ -7,8 +7,10 @@ export async function POST({ request, cookies }) {
   }
 
   try {
-    const data = await request.json();
-    await saveData(data);
+    const body = await request.json();
+    const current = await getData();
+    const merged = { ...current, ...body };
+    await saveData(merged);
     return json({ success: true });
   } catch (err: any) {
     console.error(err);
