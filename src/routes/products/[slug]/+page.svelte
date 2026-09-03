@@ -1,95 +1,68 @@
 <script lang="ts">
+  import ModelCard from '$lib/components/ModelCard.svelte';
   let { data } = $props();
-  let { product } = $derived(data);
+  let { product, models } = $derived(data);
 </script>
 
 <svelte:head>
   <title>{product.name} | Seyon</title>
 </svelte:head>
 
-<div class="bg-base min-h-screen py-12 md:py-24">
-  <div class="page-container">
-    <!-- Breadcrumbs -->
-    <nav class="flex text-sm text-dark-gray mb-10" aria-label="Breadcrumb">
-      <ol class="inline-flex items-center space-x-1 md:space-x-3">
-        <li class="inline-flex items-center">
-          <a href="/" class="hover:text-primary transition-colors">Home</a>
-        </li>
-        <li>
-          <div class="flex items-center">
-            <svg class="w-4 h-4 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <a href="/" class="hover:text-primary transition-colors">Products</a>
-          </div>
-        </li>
-        <li>
-          <div class="flex items-center">
-            <svg class="w-4 h-4 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <a href={`/categories/${product.categorySlug || ''}`} class="hover:text-primary transition-colors capitalize">{(product.categorySlug || '').replace(/-/g, ' ')}</a>
-          </div>
-        </li>
-        <li aria-current="page">
-          <div class="flex items-center">
-            <svg class="w-4 h-4 mx-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <span class="text-dark font-medium">{product.name}</span>
-          </div>
-        </li>
-      </ol>
-    </nav>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 bg-white rounded-3xl shadow-xl overflow-hidden">
-      <!-- Image Gallery section -->
-      <div class="relative bg-gray-100 p-8 flex items-center justify-center min-h-[500px]">
-        <img 
-          src={product.imageUrl} 
-          alt={product.name} 
-          class="w-full max-w-md object-contain hover:scale-105 transition-transform duration-500 drop-shadow-2xl" 
-        />
-      </div>
-      
-      <!-- Content Section -->
-      <div class="p-8 lg:p-12 flex flex-col justify-center">
-        <div class="uppercase tracking-widest text-sm font-semibold text-primary mb-3">
-          {(product.categorySlug || '').replace(/-/g, ' ')}
-        </div>
-        <h1 class="text-4xl md:text-5xl font-serif font-bold text-dark mb-6">{product.name}</h1>
-        
-        <p class="text-lg text-dark-gray mb-10 leading-relaxed">
-          {product.description}
-        </p>
-        
-        <div class="border-t border-gray-100 pt-8 mb-10">
-          <h3 class="text-xl font-bold text-dark mb-6">Technical Specifications</h3>
-          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-            <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
-              <dt class="text-sm font-medium text-dark-gray mb-1">Material</dt>
-              <dd class="text-base font-semibold text-dark">{product.material}</dd>
-            </div>
-            <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
-              <dt class="text-sm font-medium text-dark-gray mb-1">Pressure Rating</dt>
-              <dd class="text-base font-semibold text-dark">{product.pressureRating}</dd>
-            </div>
-            <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
-              <dt class="text-sm font-medium text-dark-gray mb-1">Temperature Range</dt>
-              <dd class="text-base font-semibold text-dark">{product.temperatureRange}</dd>
-            </div>
-            <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
-              <dt class="text-sm font-medium text-dark-gray mb-1">Available Sizes</dt>
-              <dd class="text-base font-semibold text-dark">{product.size}</dd>
-            </div>
-          </dl>
-        </div>
-        
-        <div class="flex gap-4">
-          <a href="/contact" class="flex-1 bg-primary text-white text-center py-4 rounded-xl font-semibold hover:bg-primary-hover hover:-translate-y-1 transition-all duration-300 shadow-lg shadow-primary/30">
-            Request Quote
-          </a>
-          {#if product.pdfUrl}
-            <a href={product.pdfUrl} target="_blank" class="px-6 py-4 rounded-xl font-semibold border border-gray-200 text-dark hover:border-dark hover:bg-gray-50 transition-colors flex items-center justify-center" title="Download PDF">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-            </a>
-          {/if}
-        </div>
-      </div>
+<div class="bg-dark text-white py-24 px-4 relative overflow-hidden">
+  <div class="absolute inset-0 z-0 opacity-30">
+    <div class="w-full h-full bg-gradient-to-br from-primary/20 to-dark"></div>
+  </div>
+  <div class="page-container relative z-10 text-center">
+    <div class="inline-block px-4 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-semibold tracking-wider uppercase mb-6 backdrop-blur-sm">
+      Model Product
     </div>
+    <h1 class="text-5xl font-bold mb-6">{product.name}</h1>
+    <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+      {product.description || 'Precision-engineered models tailored for this product.'}
+    </p>
   </div>
 </div>
+
+<section class="page-container py-24">
+  {#if product.subItems?.length > 0}
+    <div class="mb-12 p-8 bg-gray-50 rounded-3xl border border-gray-100">
+      <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Explore Sub-Products</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {#each product.subItems as sub}
+          <a href={sub.url} class="p-4 bg-white border border-gray-200 hover:border-primary text-dark hover:text-primary rounded-2xl shadow-sm hover:shadow transition-all group flex justify-between items-center">
+            <div>
+              <div class="font-bold text-base">{sub.name}</div>
+              {#if sub.description}
+                <div class="text-xs text-gray-500 mt-0.5 line-clamp-1">{sub.description}</div>
+              {/if}
+            </div>
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-primary transition-transform group-hover:translate-x-1 shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        {/each}
+      </div>
+    </div>
+  {/if}
+
+  <div class="mb-12 border-b border-gray-200 pb-6 flex justify-between items-center">
+    <h2 class="text-3xl font-bold text-dark">{product.name} Models</h2>
+    <span class="text-dark-gray bg-gray-100 px-4 py-1 rounded-full text-sm font-medium">{models.length} Models</span>
+  </div>
+
+  {#if models.length === 0}
+    <div class="text-center py-16 bg-gray-50 rounded-3xl border border-gray-100">
+      <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
+      <h3 class="text-xl font-bold text-dark mb-2">No models found</h3>
+      <p class="text-dark-gray">We are currently updating our inventory for this product.</p>
+    </div>
+  {:else}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {#each models as model}
+        <ModelCard model={model} />
+      {/each}
+    </div>
+  {/if}
+</section>

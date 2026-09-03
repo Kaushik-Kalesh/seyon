@@ -1,14 +1,15 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition';
+  import { fade, slide } from 'svelte/transition';
+  import RichTextEditor from '$lib/components/RichTextEditor.svelte';
   let { data } = $props();
   
   let industries = $state(data.industries || []);
+  let models = $state(data.models || []);
   let products = $state(data.products || []);
-  let categories = $state(data.categories || []);
   let brands = $state(data.brands || []);
   let siteSettings = $state(data.siteSettings || {});
   
-  let activeTab = $state('products');
+  let activeTab = $state('models');
   let isSaving = $state(false);
   
   let fileInputRef: HTMLInputElement;
@@ -85,7 +86,7 @@
       const res = await fetch('/api/save-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ industries, products, categories, brands, siteSettings })
+        body: JSON.stringify({ industries, models, products, brands, siteSettings })
       });
       const result = await res.json();
       if (!result.success) throw new Error(result.error);
@@ -100,12 +101,12 @@
     }
   }
 
-  function addValve() {
-    products = [{
+  function addModel() {
+    models = [{
       id: crypto.randomUUID(),
-      slug: 'new-valve-' + Date.now(),
-      name: 'New Valve',
-      categorySlug: categories[0]?.slug || 'actuators',
+      slug: 'new-model-' + Date.now(),
+      name: 'New Model',
+      productSlug: products[0]?.slug || 'actuators',
       description: '',
       imageUrl: '',
       material: '',
@@ -113,39 +114,39 @@
       temperatureRange: '',
       size: '',
       pdfUrl: null
-    }, ...products];
+    }, ...models];
   }
 
-  let deleteConfirmValve = $state<string | null>(null);
-  function deleteValve(id: string) {
-    if (deleteConfirmValve === id) {
-      products = products.filter((v: any) => v.id !== id);
-      deleteConfirmValve = null;
+  let deleteConfirmModel = $state<string | null>(null);
+  function deleteModel(id: string) {
+    if (deleteConfirmModel === id) {
+      models = models.filter((v: any) => v.id !== id);
+      deleteConfirmModel = null;
     } else {
-      deleteConfirmValve = id;
-      setTimeout(() => { if (deleteConfirmValve === id) deleteConfirmValve = null; }, 3000);
+      deleteConfirmModel = id;
+      setTimeout(() => { if (deleteConfirmModel === id) deleteConfirmModel = null; }, 3000);
     }
   }
 
-  function addCategory() {
-    categories = [{
-      id: 'cat-' + Date.now(),
-      name: 'New Category',
-      slug: 'new-category-' + Date.now(),
+  function addProduct() {
+    products = [{
+      id: 'product-' + Date.now(),
+      name: 'New Product',
+      slug: 'new-product-' + Date.now(),
       description: '',
-      url: '/categories/new-category-' + Date.now(),
+      url: '/products/new-product-' + Date.now(),
       subItems: []
-    }, ...categories];
+    }, ...products];
   }
 
-  let deleteConfirmCategory = $state<string | null>(null);
-  function deleteCategory(id: string) {
-    if (deleteConfirmCategory === id) {
-      categories = categories.filter((c: any) => c.id !== id);
-      deleteConfirmCategory = null;
+  let deleteConfirmProduct = $state<string | null>(null);
+  function deleteProduct(id: string) {
+    if (deleteConfirmProduct === id) {
+      products = products.filter((c: any) => c.id !== id);
+      deleteConfirmProduct = null;
     } else {
-      deleteConfirmCategory = id;
-      setTimeout(() => { if (deleteConfirmCategory === id) deleteConfirmCategory = null; }, 3000);
+      deleteConfirmProduct = id;
+      setTimeout(() => { if (deleteConfirmProduct === id) deleteConfirmProduct = null; }, 3000);
     }
   }
 
@@ -173,8 +174,6 @@
   function addBrand() {
     brands = [{
       id: crypto.randomUUID(),
-      name: 'New Brand',
-      description: '',
       imageUrl: ''
     }, ...brands];
   }
@@ -201,11 +200,11 @@
     <div class="flex items-center gap-6">
       <div class="font-serif text-2xl font-bold text-primary tracking-tight">Seyon CMS</div>
       <div class="flex bg-white/10 rounded-xl p-1 shadow-inner">
+        <button class="px-5 py-2.5 rounded-lg text-sm font-medium transition-colors {activeTab === 'models' ? 'bg-primary text-white shadow-md' : 'text-gray-300 hover:text-white'}" onclick={() => activeTab = 'models'}>
+          Models
+        </button>
         <button class="px-5 py-2.5 rounded-lg text-sm font-medium transition-colors {activeTab === 'products' ? 'bg-primary text-white shadow-md' : 'text-gray-300 hover:text-white'}" onclick={() => activeTab = 'products'}>
           Products
-        </button>
-        <button class="px-5 py-2.5 rounded-lg text-sm font-medium transition-colors {activeTab === 'categories' ? 'bg-primary text-white shadow-md' : 'text-gray-300 hover:text-white'}" onclick={() => activeTab = 'categories'}>
-          Categories
         </button>
         <button class="px-5 py-2.5 rounded-lg text-sm font-medium transition-colors {activeTab === 'brands' ? 'bg-primary text-white shadow-md' : 'text-gray-300 hover:text-white'}" onclick={() => activeTab = 'brands'}>
           Brands
@@ -246,31 +245,31 @@
 
   <!-- Main Content Area -->
   <main class="flex-grow p-8 max-w-7xl mx-auto w-full">
-    {#if activeTab === 'products'}
+    {#if activeTab === 'models'}
       <div in:fade={{duration: 250, delay: 50}}>
         <div class="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
           <div>
-            <h2 class="text-3xl font-bold text-dark">Valve Portfolio Manager</h2>
-            <p class="text-dark-gray mt-1">Manage technical specifications, descriptions, and PDFs for your products.</p>
+            <h2 class="text-3xl font-bold text-dark">Models Portfolio Manager</h2>
+            <p class="text-dark-gray mt-1">Manage technical specifications, descriptions, and PDFs for your models.</p>
           </div>
-          <button onclick={addValve} class="text-primary font-bold hover:text-primary-hover hover:underline decoration-2 underline-offset-4 flex items-center gap-1 transition-colors">
+          <button onclick={addModel} class="text-primary font-bold hover:text-primary-hover hover:underline decoration-2 underline-offset-4 flex items-center gap-1 transition-colors">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-            Add New Valve
+            Add New Model
           </button>
         </div>
         
         <div class="grid gap-8">
-          {#each products as product}
+          {#each models as model}
             <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 transition-all hover:border-gray-300 relative overflow-hidden group">
               <!-- Delete button appearing on hover -->
-              <button onclick={() => deleteValve(product.id)} class="absolute top-4 right-4 text-sm {deleteConfirmValve === product.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all z-10 font-medium">
-                {deleteConfirmValve === product.id ? 'Confirm?' : 'Delete'}
+              <button onclick={() => deleteModel(model.id)} class="absolute top-4 right-4 text-sm {deleteConfirmModel === model.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all z-10 font-medium">
+                {deleteConfirmModel === model.id ? 'Confirm?' : 'Delete'}
               </button>
 
               <div class="flex flex-col md:flex-row gap-8">
-                <div class="w-full md:w-48 h-48 bg-gray-50 rounded-2xl overflow-hidden shrink-0 border border-gray-200 relative group/img cursor-pointer flex items-center justify-center" onclick={() => triggerUpload('image', product)}>
-                  {#if product.imageUrl}
-                    <img src={product.imageUrl} alt={product.name} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" />
+                <div class="w-full md:w-48 h-48 bg-gray-50 rounded-2xl overflow-hidden shrink-0 border border-gray-200 relative group/img cursor-pointer flex items-center justify-center" onclick={() => triggerUpload('image', model)}>
+                  {#if model.imageUrl}
+                    <img src={model.imageUrl} alt={model.name} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" />
                   {:else}
                     <div class="w-full h-full flex flex-col items-center justify-center text-gray-400 p-4 text-center group-hover/img:text-primary transition-colors">
                       <svg class="w-8 h-8 mb-1.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -280,54 +279,59 @@
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                     <span class="text-white text-sm font-semibold flex items-center gap-2">
                       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                      {product.imageUrl ? 'Update Image' : 'Upload Image'}
+                      {model.imageUrl ? 'Update Image' : 'Upload Image'}
                     </span>
                   </div>
                 </div>
                 
                 <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                   <div class="md:col-span-1">
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Valve Name</label>
-                    <input bind:value={product.name} class="w-full px-4 py-2.5 text-lg font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Model Name</label>
+                    <input bind:value={model.name} class="w-full px-4 py-2.5 text-lg font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
                   </div>
                   
                   <div class="md:col-span-1">
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">URL Slug</label>
-                    <input bind:value={product.slug} class="w-full px-4 py-2.5 font-medium font-mono text-sm bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                    <input bind:value={model.slug} class="w-full px-4 py-2.5 font-medium font-mono text-sm bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
                   </div>
                   
                   <div class="md:col-span-2">
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
-                    <textarea bind:value={product.description} rows="2" class="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none leading-relaxed"></textarea>
+                    <textarea bind:value={model.description} rows='2' class='w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none leading-relaxed'></textarea>
                   </div>
                   
                     <div>
-                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Category Assignment</label>
-                      <select bind:value={product.categorySlug} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none font-medium">
-                        {#each categories as cat}
-                          <option value={cat.slug}>{cat.name}</option>
-                        {/each}
-                      </select>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Product Assignment</label>
+                      <div class="relative">
+                        <select bind:value={model.productSlug} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none font-medium pr-10">
+                          {#each products as product}
+                            <option value={product.slug}>{product.name}</option>
+                          {/each}
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                      </div>
                     </div>
 
                   <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Size Range</label>
-                    <input bind:value={product.size} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                    <input bind:value={model.size} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
                   </div>
                   
                   <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Materials</label>
-                    <input bind:value={product.material} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                    <input bind:value={model.material} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
                   </div>
 
                   <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Pressure Rating</label>
-                    <input bind:value={product.pressureRating} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                    <input bind:value={model.pressureRating} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
                   </div>
 
                   <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Temperature Range</label>
-                    <input bind:value={product.temperatureRange} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                    <input bind:value={model.temperatureRange} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
                   </div>
                   
                   <div class="md:col-span-2 p-5 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-200 mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -336,11 +340,11 @@
                         <svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                         Specification PDF
                       </h4>
-                      <p class="text-sm text-gray-500 mt-1">{product.pdfUrl ? 'PDF document attached and ready for download.' : 'No specification sheet uploaded yet.'}</p>
+                      <p class="text-sm text-gray-500 mt-1">{model.pdfUrl ? 'PDF document attached and ready for download.' : 'No specification sheet uploaded yet.'}</p>
                     </div>
-                    <button onclick={() => triggerUpload('pdf', product)} class="px-5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm font-bold text-dark hover:bg-gray-50 hover:border-dark transition-all shadow-sm shrink-0 flex items-center justify-center gap-2">
+                    <button onclick={() => triggerUpload('pdf', model)} class="px-5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm font-bold text-dark hover:bg-gray-50 hover:border-dark transition-all shadow-sm shrink-0 flex items-center justify-center gap-2">
                       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                      {product.pdfUrl ? 'Replace PDF' : 'Upload PDF'}
+                      {model.pdfUrl ? 'Replace PDF' : 'Upload PDF'}
                     </button>
                   </div>
                 </div>
@@ -351,65 +355,70 @@
       </div>
     {/if}
 
-    {#if activeTab === 'categories'}
+    {#if activeTab === 'products'}
       <div in:fade={{duration: 250, delay: 50}}>
         <div class="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
           <div>
-            <h2 class="text-3xl font-bold text-dark">Categories Manager</h2>
-            <p class="text-dark-gray mt-1">Set a Parent Category to nest it as a sub-category at <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">/categories/[parent]/[slug]</code>.</p>
+            <h2 class="text-3xl font-bold text-dark">Products Manager</h2>
+            <p class="text-dark-gray mt-1">Set a Parent Product to nest it as a sub-product at <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">/products/[parent]/[slug]</code>.</p>
           </div>
-          <button onclick={addCategory} class="text-primary font-bold hover:text-primary-hover hover:underline decoration-2 underline-offset-4 flex items-center gap-1 transition-colors">
+          <button onclick={addProduct} class="text-primary font-bold hover:text-primary-hover hover:underline decoration-2 underline-offset-4 flex items-center gap-1 transition-colors">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-            Add Category
+            Add Product
           </button>
         </div>
         <div class="grid gap-6 md:grid-cols-2">
-          {#each categories as cat}
-            {@const urlParts = cat.url.split('/')}
-            {@const isSubcategory = urlParts.length === 4}
-            {@const currentParentSlug = isSubcategory ? urlParts[2] : ''}
-            {@const topLevelCats = categories.filter((c: any) => c.url.split('/').length === 3 && c.id !== cat.id)}
-            <div class="bg-white p-6 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 relative {isSubcategory ? 'border-l-4 border-l-primary/30' : ''}">
-              <button onclick={() => deleteCategory(cat.id)} class="absolute top-4 right-4 text-sm {deleteConfirmCategory === cat.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all font-medium">
-                {deleteConfirmCategory === cat.id ? 'Confirm?' : 'Delete'}
+          {#each products as product}
+            {@const urlParts = product.url.split('/')}
+            {@const isSubproduct = urlParts.length === 4}
+            {@const currentParentSlug = isSubproduct ? urlParts[2] : ''}
+            {@const topLevelCats = products.filter((c: any) => c.url.split('/').length === 3 && c.id !== product.id)}
+            <div class="bg-white p-6 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 relative {isSubproduct ? 'border-l-4 border-l-primary/30' : ''}">
+              <button onclick={() => deleteProduct(product.id)} class="absolute top-4 right-4 text-sm {deleteConfirmProduct === product.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all font-medium">
+                {deleteConfirmProduct === product.id ? 'Confirm?' : 'Delete'}
               </button>
               <div class="grid grid-cols-1 gap-4 mt-2">
                 <div>
-                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Category Name</label>
-                  <input bind:value={cat.name} oninput={() => {
-                    cat.slug = cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                    cat.url = isSubcategory ? `/categories/${currentParentSlug}/${cat.slug}` : `/categories/${cat.slug}`;
+                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Product Name</label>
+                  <input bind:value={product.name} oninput={() => {
+                    product.slug = product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                    product.url = isSubproduct ? `/products/${currentParentSlug}/${product.slug}` : `/products/${product.slug}`;
                   }} class="w-full px-4 py-2.5 text-lg font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
                 </div>
                 <div>
-                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Parent Category</label>
-                  <select
-                    value={currentParentSlug}
-                    onchange={(e) => {
-                      const parent = (e.target as HTMLSelectElement).value;
-                      cat.url = parent ? `/categories/${parent}/${cat.slug}` : `/categories/${cat.slug}`;
-                    }}
-                    class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none font-medium"
-                  >
-                    <option value="">— None (top-level) —</option>
-                    {#each topLevelCats as parent}
-                      <option value={parent.slug}>{parent.name}</option>
-                    {/each}
-                  </select>
+                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Parent Product</label>
+                  <div class="relative">
+                    <select
+                      value={currentParentSlug}
+                      onchange={(e) => {
+                        const parent = (e.target as HTMLSelectElement).value;
+                        product.url = parent ? `/products/${parent}/${product.slug}` : `/products/${product.slug}`;
+                      }}
+                      class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none font-medium pr-10"
+                    >
+                      <option value="">— None (top-level) —</option>
+                      {#each topLevelCats as parent}
+                        <option value={parent.slug}>{parent.name}</option>
+                      {/each}
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">URL Slug</label>
                   <div class="flex items-center bg-gray-50 border border-transparent rounded-xl focus-within:bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all overflow-hidden">
-                    <span class="px-3 py-2.5 text-sm font-mono text-gray-400 shrink-0 border-r border-gray-200">{isSubcategory ? `/categories/${currentParentSlug}/` : '/categories/'}</span>
-                    <input bind:value={cat.slug} oninput={() => {
-                      cat.url = isSubcategory ? `/categories/${currentParentSlug}/${cat.slug}` : `/categories/${cat.slug}`;
+                    <span class="px-3 py-2.5 text-sm font-mono text-gray-400 shrink-0 border-r border-gray-200">{isSubproduct ? `/products/${currentParentSlug}/` : '/products/'}</span>
+                    <input bind:value={product.slug} oninput={() => {
+                      product.url = isSubproduct ? `/products/${currentParentSlug}/${product.slug}` : `/products/${product.slug}`;
                     }} class="flex-1 px-3 py-2.5 font-medium font-mono text-sm bg-transparent outline-none" />
                   </div>
-                  <p class="text-xs text-gray-400 mt-1 font-mono">→ {cat.url}</p>
+                  <p class="text-xs text-gray-400 mt-1 font-mono">→ {product.url}</p>
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
-                  <textarea bind:value={cat.description} rows="2" class="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none leading-relaxed"></textarea>
+                  <textarea bind:value={product.description} rows='2' class='w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none leading-relaxed'></textarea>
                 </div>
               </div>
             </div>
@@ -423,7 +432,7 @@
          <div class="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
            <div>
              <h2 class="text-3xl font-bold text-dark">Industries Manager</h2>
-             <p class="text-dark-gray mt-1">Manage industry categories and their showcase images.</p>
+             <p class="text-dark-gray mt-1">Manage industry products and their showcase images.</p>
            </div>
            <button onclick={addIndustry} class="text-primary font-bold hover:text-primary-hover hover:underline decoration-2 underline-offset-4 flex items-center gap-1 transition-colors">
              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
@@ -446,7 +455,7 @@
                  </div>
                  
                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
-                 <textarea bind:value={industry.description} rows="3" class="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none mb-6 resize-none leading-relaxed"></textarea>
+                 <textarea bind:value={industry.description} rows='3' class='w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none mb-6 resize-none leading-relaxed'></textarea>
                  
                   <div class="relative w-full h-48 rounded-xl overflow-hidden border border-gray-200 mt-auto cursor-pointer group/img flex items-center justify-center bg-gray-50" onclick={() => triggerUpload('image', industry)}>
                     {#if industry.imageUrl}
@@ -484,23 +493,14 @@
           </button>
         </div>
 
-        <div class="grid gap-8 md:grid-cols-2">
+        <div class="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {#each brands as brand}
-            <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col group relative">
-              <button onclick={() => deleteBrand(brand.id)} class="absolute top-4 right-4 text-sm {deleteConfirmBrand === brand.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all z-10 font-medium">
+            <div class="bg-white p-4 pt-12 rounded-2xl shadow-md border border-gray-100 flex flex-col group relative">
+              <button onclick={() => deleteBrand(brand.id)} class="absolute top-2 right-2 text-xs {deleteConfirmBrand === brand.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-2 py-1 rounded-lg transition-all z-10 font-medium">
                 {deleteConfirmBrand === brand.id ? 'Confirm?' : 'Delete'}
               </button>
-              <div class="flex gap-4 mb-4">
-                <div class="flex-grow">
-                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Brand Name</label>
-                  <input bind:value={brand.name} class="w-full px-4 py-2.5 text-xl font-bold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-                </div>
-              </div>
-              
-              <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
-              <textarea bind:value={brand.description} rows="3" class="w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none mb-6 resize-none leading-relaxed"></textarea>
-              
-              <div class="relative w-full h-48 rounded-xl overflow-hidden border border-gray-200 mt-auto cursor-pointer group/img flex items-center justify-center bg-gray-50" onclick={() => triggerUpload('image', brand, 'imageUrl')}>
+
+              <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 mt-auto cursor-pointer group/img flex items-center justify-center bg-gray-50" onclick={() => triggerUpload('image', brand, 'imageUrl')}>
                 {#if brand.imageUrl}
                   <img src={brand.imageUrl} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt={brand.name}/>
                 {:else}
@@ -548,7 +548,7 @@
                 {#each Object.keys(siteSettings).filter(k => !k.includes('Image') && (k.toLowerCase().includes(replaceSearch.toLowerCase()) || (siteSettings[k]||'').toLowerCase().includes(replaceSearch.toLowerCase()))) as key}
                   <div class="border border-gray-100 rounded-xl p-4 hover:border-primary/40 hover:shadow-md transition-all cursor-pointer bg-gray-50 hover:bg-white group" onclick={() => openEditor(key)}>
                     <div class="text-xs font-bold text-primary mb-2 font-mono break-all">{key}</div>
-                    <div class="text-sm text-dark-gray line-clamp-3 leading-relaxed">{siteSettings[key]}</div>
+                    <div class="text-sm text-dark-gray line-clamp-3 leading-relaxed">{@html siteSettings[key]}</div>
                   </div>
                 {/each}
               {:else}
@@ -657,7 +657,7 @@
 
       <div class="mb-8">
         <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Value</label>
-        <textarea bind:value={editValue} rows="6" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none text-dark-gray"></textarea>
+        <RichTextEditor bind:value={editValue} />
       </div>
 
       <div class="flex justify-end gap-3">
@@ -667,3 +667,9 @@
     </div>
   </div>
 {/if}
+
+
+
+
+
+

@@ -9,12 +9,12 @@
 
 <div class="bg-dark text-white py-24 px-4 relative overflow-hidden">
   <div class="absolute inset-0 z-0 opacity-20">
-    <img src="https://4.imimg.com/data4/XP/YO/ANDROID-11872361/product-500x500.jpeg" alt="Background" class="w-full h-full object-cover" />
+    <img src="https://4.imimg.com/data4/XP/YO/ANDROID-11872361/model-500x500.jpeg" alt="Background" class="w-full h-full object-cover" />
   </div>
   <div class="page-container relative z-10 text-center">
     <h1 class="text-5xl font-bold mb-6">Industries We Serve</h1>
     <p class="text-xl text-gray-300 max-w-2xl mx-auto">
-      Specialized valve solutions engineered for the unique demands of global industries.
+      Specialized model solutions engineered for the unique demands of global industries.
     </p>
   </div>
 </div>
@@ -36,3 +36,6 @@
     {/each}
   </div>
 </section>
+
+
+

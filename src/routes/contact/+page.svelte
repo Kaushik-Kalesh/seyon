@@ -13,10 +13,10 @@
     <div class="page-container flex flex-col gap-24">
         <div class="text-center max-w-3xl mx-auto">
             <h1 class="text-5xl font-bold text-dark mb-6">
-                {siteSettings.contact_hero_title}
+                {@html siteSettings.contact_hero_title}
             </h1>
             <p class="text-xl text-dark-gray">
-                {siteSettings.contact_hero_subtitle}
+                {@html siteSettings.contact_hero_subtitle}
             </p>
         </div>
 
@@ -37,11 +37,11 @@
                         class="text-3xl md:text-4xl font-serif font-bold text-dark mb-6"
                     >
                         Tell us what you need.<br /><span class="text-gray-500"
-                            >We'll help with the valve.</span
+                            >We'll help with the model.</span
                         >
                     </h2>
                     <p class="text-dark-gray text-lg mb-8 leading-relaxed">
-                        Not sure which valve is right? Share the application,
+                        Not sure which model is right? Share the application,
                         media, line size and operating conditions. Our team can
                         review the requirement and respond with a practical
                         solution.
@@ -62,7 +62,7 @@
                                     ></path></svg
                                 >
                             </div>
-                             Application-focused valve selection
+                             Application-focused model selection
                         </li>
                         <li class="flex items-center gap-3">
                             <div
@@ -106,7 +106,7 @@
                     onsubmit={(e) => {
                         e.preventDefault();
                         const fd = new FormData(e.currentTarget);
-                        const msg = `Hi Seyon, I need a valve solution:\n\n*Application:* ${fd.get("application")}\n*Media:* ${fd.get("media")}\n*Line Size:* ${fd.get("size")}\n*Pressure:* ${fd.get("pressure")}\n*Requirement:* ${fd.get("requirement")}\n\nPlease review and let me know the options.`;
+                        const msg = `Hi Seyon, I need a model solution:\n\n*Application:* ${fd.get("application")}\n*Media:* ${fd.get("media")}\n*Line Size:* ${fd.get("size")}\n*Pressure:* ${fd.get("pressure")}\n*Requirement:* ${fd.get("requirement")}\n\nPlease review and let me know the options.`;
                         window.open(
                             `https://wa.me/919884725066?text=${encodeURIComponent(msg)}`,
                             "_blank",

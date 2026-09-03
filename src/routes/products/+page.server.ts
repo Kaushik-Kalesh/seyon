@@ -3,10 +3,5 @@ import { getData } from '$lib/server/db';
 export async function load() {
   const data = await getData();
   const topLevelProducts = (data.products || []).filter((c: any) => c.url.split('/').length === 3);
-  return { 
-    siteSettings: data.siteSettings, 
-    products: topLevelProducts, 
-    allProducts: data.products,
-    brands: data.brands 
-  };
+  return { products: topLevelProducts };
 }

@@ -10,10 +10,10 @@ export async function load({ params }) {
     error(404, 'Industry not found');
   }
   
-  const industryValves = data.products.filter((v: any) => v.industrySlug === params.slug);
+  const industryModels = data.models.filter((v: any) => v.industrySlug === params.slug);
   
   return {
     industry,
-    valves: industryValves
+    models: industryModels
   };
 }

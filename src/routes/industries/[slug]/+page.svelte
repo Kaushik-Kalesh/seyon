@@ -1,7 +1,7 @@
 <script lang="ts">
-  import ValveCard from '$lib/components/ValveCard.svelte';
+  import ModelCard from '$lib/components/ModelCard.svelte';
   let { data } = $props();
-  let { industry, valves } = $derived(data);
+  let { industry, models } = $derived(data);
 </script>
 
 <svelte:head>
@@ -26,19 +26,22 @@
 
 <section class="page-container py-24">
   <div class="mb-12 border-b border-gray-200 pb-6 flex justify-between items-center">
-    <h2 class="text-3xl font-bold text-dark">Valves for {industry.name}</h2>
-    <span class="text-dark-gray bg-gray-100 px-4 py-1 rounded-full text-sm font-medium">{valves.length} Products</span>
+    <h2 class="text-3xl font-bold text-dark">Models for {industry.name}</h2>
+    <span class="text-dark-gray bg-gray-100 px-4 py-1 rounded-full text-sm font-medium">{models.length} Models</span>
   </div>
   
-  {#if valves.length > 0}
+  {#if models.length > 0}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {#each valves as valve}
-        <ValveCard {valve} />
+      {#each models as model}
+        <ModelCard {model} />
       {/each}
     </div>
   {:else}
     <div class="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100">
-      <p class="text-dark-gray text-lg">No products are currently listed for this industry.</p>
+      <p class="text-dark-gray text-lg">No models are currently listed for this industry.</p>
     </div>
   {/if}
 </section>
+
+
+

@@ -1,12 +1,12 @@
 <script lang="ts">
-  let { valve } = $props<{ valve: any }>();
+  let { model } = $props<{ model: any }>();
 </script>
 
-<a href={`/products/${valve.slug}`} class="group block relative overflow-hidden rounded-xl shadow-md hover-lift bg-white border border-gray-100">
+<a href={`/models/${model.slug}`} class="group block relative overflow-hidden rounded-xl shadow-md hover-lift bg-white border border-gray-100">
   <div class="aspect-[4/3] overflow-hidden bg-gray-100 relative">
     <img 
-      src={valve.imageUrl} 
-      alt={valve.name} 
+      src={model.imageUrl} 
+      alt={model.name} 
       class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
       loading="lazy"
     />
@@ -18,13 +18,14 @@
   </div>
   <div class="p-6 relative z-10 bg-white">
     <div class="text-xs font-semibold text-primary uppercase tracking-wider mb-2">
-      {(valve.categorySlug || valve.industrySlug || '').replace(/-/g, ' ')}
+      {(model.productSlug || model.industrySlug || '').replace(/-/g, ' ')}
     </div>
     <h3 class="text-xl font-serif font-bold text-dark mb-2 group-hover:text-primary transition-colors duration-300">
-      {valve.name}
+      {model.name}
     </h3>
     <p class="text-sm text-dark-gray line-clamp-2">
-      {valve.description}
+      {model.description}
     </p>
   </div>
 </a>
+
