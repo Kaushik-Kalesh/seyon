@@ -57,7 +57,7 @@
                 <!-- Models Dropdown -->
                 <div class="relative group/nav">
                     <a href="/products" class="relative py-4 text-sm font-medium transition-colors duration-300 flex items-center gap-1 {page.url.pathname.includes('/products') || page.url.pathname.includes('/models') ? 'text-primary' : 'text-dark-gray group-hover/nav:text-dark'}">
-                        Models
+                        Products
                         <svg class="w-4 h-4 transition-transform duration-200 group-hover/nav:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         <span class="absolute bottom-3 left-0 h-0.5 bg-primary transition-all duration-300 w-0 group-hover/nav:w-full {page.url.pathname.includes('/products') || page.url.pathname.includes('/models') ? '!w-full' : ''}"></span>
                     </a>
@@ -154,7 +154,7 @@
 
                 <!-- Mobile Models -->
                 <div class="px-3 py-3">
-                    <a href="/products" class="block text-base font-medium text-dark-gray mb-2 {page.url.pathname.includes('/products') ? 'text-primary' : 'hover:text-dark'}">Models</a>
+                    <a href="/products" class="block text-base font-medium text-dark-gray mb-2 {page.url.pathname.includes('/products') ? 'text-primary' : 'hover:text-dark'}">Products</a>
                     <div class="pl-4 space-y-1 border-l-2 border-gray-100">
                         {#each products as product}
                             <a href={product.url} class="block py-2 text-sm text-gray-600 hover:text-primary transition-colors">{product.name}</a>
@@ -194,4 +194,6 @@
         </div>
     {/if}
 </nav>
+
+
 
