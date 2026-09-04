@@ -23,9 +23,7 @@
     <h3 class="text-xl font-serif font-bold text-dark mb-2 group-hover:text-primary transition-colors duration-300">
       {model.name}
     </h3>
-    <p class="text-sm text-dark-gray line-clamp-2">
-      {model.description}
-    </p>
+    <div class="text-sm text-dark-gray line-clamp-2 prose prose-sm max-w-none">{@html model.description}</div>
   </div>
 </a>
 

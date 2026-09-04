@@ -23,12 +23,12 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
     <div>
       <h2 class="text-4xl font-bold text-dark mb-6">{@html siteSettings.about_story_title}</h2>
-      <p class="text-lg text-dark-gray mb-6 leading-relaxed">
+      <div class="text-lg text-dark-gray mb-6 leading-relaxed prose prose-lg">
         {@html siteSettings.about_story_desc1}
-      </p>
-      <p class="text-lg text-dark-gray mb-6 leading-relaxed">
+      </div>
+      <div class="text-lg text-dark-gray mb-6 leading-relaxed prose prose-lg">
         {@html siteSettings.about_story_desc2}
-      </p>
+      </div>
       <div class="grid grid-cols-2 gap-8 mt-12">
         <div class="border-l-4 border-primary pl-4">
           <div class="text-3xl font-bold text-dark mb-1">{@html siteSettings.about_stats1_number}</div>

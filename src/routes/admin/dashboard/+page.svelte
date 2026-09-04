@@ -297,7 +297,7 @@
                   
                   <div class="md:col-span-2">
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
-                    <textarea bind:value={model.description} rows='2' class='w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none leading-relaxed'></textarea>
+                    <RichTextEditor bind:value={model.description} />
                   </div>
                   
                     <div>
@@ -418,7 +418,7 @@
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
-                  <textarea bind:value={product.description} rows='2' class='w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none leading-relaxed'></textarea>
+                  <RichTextEditor bind:value={product.description} />
                 </div>
               </div>
             </div>
@@ -455,7 +455,7 @@
                  </div>
                  
                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
-                 <textarea bind:value={industry.description} rows='3' class='w-full px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none mb-6 resize-none leading-relaxed'></textarea>
+                 <RichTextEditor bind:value={industry.description} />
                  
                   <div class="relative w-full h-48 rounded-xl overflow-hidden border border-gray-200 mt-auto cursor-pointer group/img flex items-center justify-center bg-gray-50" onclick={() => triggerUpload('image', industry)}>
                     {#if industry.imageUrl}

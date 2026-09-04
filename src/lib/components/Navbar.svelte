@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
     import { page } from "$app/state";
     import { slide } from 'svelte/transition';
 
@@ -10,6 +10,7 @@
     const links = [
         { name: "Home", href: "/" },
         { name: "About Us", href: "/about" },
+        { name: "Services", href: "/services" },
         { name: "Industries", href: "/industries" },
         { name: "Brands", href: "/brands" },
     ];
@@ -35,7 +36,7 @@
 
             <!-- Desktop Menu -->
             <div class="hidden md:flex space-x-8 items-center">
-                {#each links.slice(0, 2) as link}
+                {#each links.slice(0, 3) as link}
                     <a
                         href={link.href}
                         class="relative text-sm font-medium transition-colors duration-300 group
@@ -89,7 +90,7 @@
                         </div>
                 </div>
 
-                {#each links.slice(2) as link}
+                {#each links.slice(3) as link}
                     <a
                         href={link.href}
                         class="relative text-sm font-medium transition-colors duration-300 group
@@ -138,7 +139,7 @@
     {#if isMobileMenuOpen}
         <div class="md:hidden bg-white border-b border-gray-100 shadow-sm" transition:slide={{ duration: 250 }}>
             <div class="px-4 pt-2 pb-6 space-y-1">
-                {#each links.slice(0,2) as link}
+                {#each links.slice(0, 3) as link}
                     <a
                         href={link.href}
                         onclick={() => isMobileMenuOpen = false}
@@ -168,7 +169,7 @@
                     </div>
                 </div>
 
-                {#each links.slice(2) as link}
+                {#each links.slice(3) as link}
                     <a
                         href={link.href}
                         onclick={() => isMobileMenuOpen = false}
@@ -193,3 +194,4 @@
         </div>
     {/if}
 </nav>
+

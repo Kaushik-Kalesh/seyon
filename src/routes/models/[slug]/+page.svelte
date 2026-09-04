@@ -53,9 +53,7 @@
         </div>
         <h1 class="text-4xl md:text-5xl font-serif font-bold text-dark mb-6">{model.name}</h1>
         
-        <p class="text-lg text-dark-gray mb-10 leading-relaxed">
-          {model.description}
-        </p>
+        <div class="text-lg text-dark-gray mb-10 leading-relaxed prose prose-sm max-w-none">{@html model.description}</div>
         
         <div class="border-t border-gray-100 pt-8 mb-10">
           <h3 class="text-xl font-bold text-dark mb-6">Technical Specifications</h3>

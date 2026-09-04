@@ -18,9 +18,7 @@
       Industry Solution
     </div>
     <h1 class="text-5xl font-bold mb-6">{industry.name}</h1>
-    <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-      {industry.description}
-    </p>
+    <div class="text-xl text-gray-300 max-w-3xl mx-auto prose prose-sm max-w-none">{@html industry.description}</div>
   </div>
 </div>
 

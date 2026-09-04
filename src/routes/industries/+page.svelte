@@ -28,9 +28,7 @@
         <div class="absolute bottom-0 left-0 p-8 w-full">
           <div class="text-primary font-bold text-5xl opacity-50 mb-2">0{i + 1}</div>
           <h2 class="text-3xl font-serif font-bold text-white mb-4">{industry.name}</h2>
-          <p class="text-gray-300 text-lg opacity-80">
-            {industry.description}
-          </p>
+          <div class="text-gray-300 text-lg opacity-80 prose prose-sm max-w-none">{@html industry.description}</div>
         </div>
       </div>
     {/each}
