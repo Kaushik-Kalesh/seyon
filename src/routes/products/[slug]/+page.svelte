@@ -13,13 +13,13 @@
     <div class="w-full h-full bg-gradient-to-br from-primary/20 to-dark"></div>
   </div>
   <div class="page-container relative z-10 text-center">
-    <div class="inline-block px-4 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-semibold tracking-wider uppercase mb-6 backdrop-blur-sm">
-      Model Product
+    <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 text-primary font-bold rounded-full mb-6 text-sm backdrop-blur-md border border-primary/20">
+      Products Collection
     </div>
     <h1 class="text-5xl font-bold mb-6">{product.name}</h1>
-    <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-      {product.description || 'Precision-engineered models tailored for this product.'}
-    </p>
+    <div class="text-xl text-gray-300 max-w-3xl mx-auto prose prose-invert prose-lg">
+      {@html product.description || 'Precision-engineered models tailored for this product.'}
+    </div>
   </div>
 </div>
 
@@ -33,7 +33,7 @@
             <div>
               <div class="font-bold text-base">{sub.name}</div>
               {#if sub.description}
-                <div class="text-xs text-gray-500 mt-0.5 line-clamp-1">{sub.description}</div>
+                <div class="text-xs text-gray-500 mt-0.5 line-clamp-1 prose prose-sm max-w-none">{@html sub.description}</div>
               {/if}
             </div>
             <svg class="w-5 h-5 text-gray-400 group-hover:text-primary transition-transform group-hover:translate-x-1 shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

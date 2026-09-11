@@ -33,7 +33,7 @@
                             </svg>
                         </a>
                     </div>
-                    <p class="text-sm text-gray-500 mb-4">{product.description || 'View specialized flow control solutions.'}</p>
+                    <div class="text-sm text-gray-500 mb-4 prose prose-sm max-w-none">{@html product.description || 'View specialized flow control solutions.'}</div>
                 </div>
 
                 {#if product.subItems?.length > 0}

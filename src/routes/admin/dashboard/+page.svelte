@@ -546,9 +546,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {#if replaceSearch.trim().length > 0}
                 {#each Object.keys(siteSettings).filter(k => !k.includes('Image') && (k.toLowerCase().includes(replaceSearch.toLowerCase()) || (siteSettings[k]||'').toLowerCase().includes(replaceSearch.toLowerCase()))) as key}
-                  <div class="border border-gray-100 rounded-xl p-4 hover:border-primary/40 hover:shadow-md transition-all cursor-pointer bg-gray-50 hover:bg-white group" onclick={() => openEditor(key)}>
+                  <div class="border border-gray-100 rounded-xl p-4 hover:border-primary/40 hover:shadow-md transition-all cursor-pointer bg-gray-50 hover:bg-white group flex flex-col h-full" onclick={() => openEditor(key)}>
                     <div class="text-xs font-bold text-primary mb-2 font-mono break-all">{key}</div>
-                    <div class="text-sm text-dark-gray line-clamp-3 leading-relaxed">{@html siteSettings[key]}</div>
+                    {#if siteSettings[key] && String(siteSettings[key]).replace(/<[^>]*>?/gm, '').trim()}
+                      <div class="text-sm text-dark-gray line-clamp-3 leading-relaxed flex-grow">{@html siteSettings[key]}</div>
+                    {:else}
+                      <div class="text-sm text-gray-400 italic flex-grow py-1">[Empty Content]</div>
+                    {/if}
                   </div>
                 {/each}
               {:else}

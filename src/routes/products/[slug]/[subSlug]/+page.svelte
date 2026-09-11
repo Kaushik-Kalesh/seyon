@@ -17,9 +17,9 @@
       {parent.name}
     </a>
     <h1 class="text-5xl font-bold mb-6">{product.name}</h1>
-    <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-      {product.description || 'Precision-engineered models tailored for this product.'}
-    </p>
+    <div class="text-xl text-gray-300 max-w-3xl mx-auto prose prose-invert prose-lg">
+      {@html product.description || 'Precision-engineered models tailored for this product.'}
+    </div>
   </div>
 </div>
 

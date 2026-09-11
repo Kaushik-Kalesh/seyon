@@ -64,7 +64,7 @@
                 <a href={product.url} class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-primary/30 transition-all group flex items-start justify-between gap-3">
                     <div>
                         <h3 class="text-lg font-bold text-dark group-hover:text-primary transition-colors">{product.name}</h3>
-                        <p class="text-sm text-gray-500 mt-1">{product.description || 'View specialized flow control solutions in this product.'}</p>
+                        <div class="text-sm text-gray-500 mt-1 prose prose-sm max-w-none">{@html product.description || 'View specialized flow control solutions in this product.'}</div>
                     </div>
                     <svg class="w-5 h-5 text-gray-300 group-hover:text-primary shrink-0 mt-0.5 transition-colors transform group-hover:translate-x-1 group-hover:-translate-y-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
