@@ -1,68 +1,93 @@
 <script lang="ts">
-  import ModelCard from '$lib/components/ModelCard.svelte';
-  let { data } = $props();
-  let { product, models } = $derived(data);
+    import ModelCard from "$lib/components/ModelCard.svelte";
+    let { data } = $props();
+    let { product, models } = $derived(data);
 </script>
 
 <svelte:head>
-  <title>{product.name} | Seyon</title>
+    <title>{product.name} | Seyon</title>
 </svelte:head>
 
-<div class="bg-dark text-white py-24 px-4 relative overflow-hidden">
-  <div class="absolute inset-0 z-0 opacity-30">
-    <div class="w-full h-full bg-gradient-to-br from-primary/20 to-dark"></div>
-  </div>
-  <div class="page-container relative z-10 text-center">
-    <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 text-primary font-bold rounded-full mb-6 text-sm backdrop-blur-md border border-primary/20">
-      Products Collection
-    </div>
-    <h1 class="text-5xl font-bold mb-6">{product.name}</h1>
-    <div class="text-xl text-gray-300 max-w-3xl mx-auto prose prose-invert prose-lg">
-      {@html product.description || 'Precision-engineered models tailored for this product.'}
-    </div>
-  </div>
-</div>
-
 <section class="page-container py-24">
-  {#if product.subItems?.length > 0}
-    <div class="mb-12 p-8 bg-gray-50 rounded-3xl border border-gray-100">
-      <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Explore Sub-Products</h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {#each product.subItems as sub}
-          <a href={sub.url} class="p-4 bg-white border border-gray-200 hover:border-primary text-dark hover:text-primary rounded-2xl shadow-sm hover:shadow transition-all group flex justify-between items-center">
-            <div>
-              <div class="font-bold text-base">{sub.name}</div>
-              {#if sub.description}
-                <div class="text-xs text-gray-500 mt-0.5 line-clamp-1 prose prose-sm max-w-none">{@html sub.description}</div>
-              {/if}
+    {#if product.subItems?.length > 0}
+        <div class="mb-12 p-8 bg-gray-50 rounded-3xl border border-gray-100">
+            <h3
+                class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4"
+            >
+                Explore Sub-Products
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {#each product.subItems as sub}
+                    <a
+                        href={sub.url}
+                        class="p-4 bg-white border border-gray-200 hover:border-primary text-dark hover:text-primary rounded-2xl shadow-sm hover:shadow transition-all group flex justify-between items-center"
+                    >
+                        <div>
+                            <div class="font-bold text-base">{sub.name}</div>
+                            {#if sub.description}
+                                <div
+                                    class="text-xs text-gray-500 mt-0.5 line-clamp-1 prose prose-sm max-w-none"
+                                >
+                                    {@html sub.description}
+                                </div>
+                            {/if}
+                        </div>
+                        <svg
+                            class="w-5 h-5 text-gray-400 group-hover:text-primary transition-transform group-hover:translate-x-1 shrink-0 ml-2"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 5l7 7-7 7"
+                            />
+                        </svg>
+                    </a>
+                {/each}
             </div>
-            <svg class="w-5 h-5 text-gray-400 group-hover:text-primary transition-transform group-hover:translate-x-1 shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </div>
+    {/if}
+
+    <div
+        class="mb-12 border-b border-gray-200 pb-6 flex justify-between items-center"
+    >
+        <h2 class="text-3xl font-bold text-dark">{product.name} Models</h2>
+        <span
+            class="text-dark-gray bg-gray-100 px-4 py-1 rounded-full text-sm font-medium"
+            >{models.length} Models</span
+        >
+    </div>
+
+    {#if models.length === 0}
+        <div
+            class="text-center py-16 bg-gray-50 rounded-3xl border border-gray-100"
+        >
+            <svg
+                class="w-16 h-16 text-gray-300 mx-auto mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                />
             </svg>
-          </a>
-        {/each}
-      </div>
-    </div>
-  {/if}
-
-  <div class="mb-12 border-b border-gray-200 pb-6 flex justify-between items-center">
-    <h2 class="text-3xl font-bold text-dark">{product.name} Models</h2>
-    <span class="text-dark-gray bg-gray-100 px-4 py-1 rounded-full text-sm font-medium">{models.length} Models</span>
-  </div>
-
-  {#if models.length === 0}
-    <div class="text-center py-16 bg-gray-50 rounded-3xl border border-gray-100">
-      <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-      </svg>
-      <h3 class="text-xl font-bold text-dark mb-2">No models found</h3>
-      <p class="text-dark-gray">We are currently updating our inventory for this product.</p>
-    </div>
-  {:else}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {#each models as model}
-        <ModelCard model={model} />
-      {/each}
-    </div>
-  {/if}
+            <h3 class="text-xl font-bold text-dark mb-2">No models found</h3>
+            <p class="text-dark-gray">
+                We are currently updating our inventory for this product.
+            </p>
+        </div>
+    {:else}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {#each models as model}
+                <ModelCard {model} />
+            {/each}
+        </div>
+    {/if}
 </section>

@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
   import { page } from '$app/state';
   let siteSettings = $derived(page.data.siteSettings || { companyName: 'Seyon Enterprises', email: 'sales@seyonflo.in', phone: '+91 98847 25066', address: 'S/O Mathialagan, 1/E 388A, 19TH STREET, THAI MOOGAMBIGAI NAGAR, Madambakkam, Kancheepuram, Tamil Nadu, India-603202' });
 </script>
@@ -11,7 +11,7 @@
                     <img
                         src="/logo.png"
                         alt="Seyon Logo"
-                        class="h-8 w-auto brightness-0 invert"
+                        class="h-14 w-auto object-contain brightness-0 invert"
                     />
                 </div>
                 <h3 class="text-xl font-bold font-serif mb-6">{@html siteSettings.companyName}</h3>
@@ -92,3 +92,4 @@
         </div>
     </div>
 </footer>
+

@@ -29,7 +29,7 @@
                     <img
                         src="/logo.png"
                         alt="Seyon Logo"
-                        class="h-10 w-auto group-hover:scale-105 transition-transform duration-300"
+                        class="h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
                     />
                 </a>
             </div>
@@ -194,6 +194,7 @@
         </div>
     {/if}
 </nav>
+
 
 
 

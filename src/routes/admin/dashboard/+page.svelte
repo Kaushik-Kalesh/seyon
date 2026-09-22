@@ -118,49 +118,47 @@
   }
 
   let deleteConfirmModel = $state<string | null>(null);
-  function deleteModel(id: string) {
-    if (deleteConfirmModel === id) {
-      models = models.filter((v: any) => v.id !== id);
-      deleteConfirmModel = null;
-    } else {
-      deleteConfirmModel = id;
-      setTimeout(() => { if (deleteConfirmModel === id) deleteConfirmModel = null; }, 3000);
-    }
-  }
-
-  function addProduct() {
-    products = [{
-      id: 'product-' + Date.now(),
-      name: 'New Product',
-      slug: 'new-product-' + Date.now(),
-      description: '',
-      url: '/products/new-product-' + Date.now(),
-      subItems: []
-    }, ...products];
-  }
-
   let deleteConfirmProduct = $state<string | null>(null);
-  function deleteProduct(id: string) {
-    if (deleteConfirmProduct === id) {
-      products = products.filter((c: any) => c.id !== id);
-      deleteConfirmProduct = null;
-    } else {
-      deleteConfirmProduct = id;
-      setTimeout(() => { if (deleteConfirmProduct === id) deleteConfirmProduct = null; }, 3000);
-    }
-  }
-
-
-  function addIndustry() {
-    industries = [...industries, {
-      id: crypto.randomUUID(),
-      name: 'New Industry',
-      description: '',
-      imageUrl: ''
-    }];
-  }
-
   let deleteConfirmIndustry = $state<string | null>(null);
+
+  let topLevelCats = $derived(products.filter((c: any) => c.url.split('/').length === 3));
+  let orphans = $derived(products.filter((c: any) => c.url.split('/').length === 4 && !topLevelCats.find((p:any) => p.slug === c.url.split('/')[2])));
+  let productSlugs = $derived(Array.from(new Set(models.map(m => m.productSlug || 'actuators'))));
+
+  function moveProduct(product: any, direction: number) {
+    const isTopLevel = product.url.split('/').length === 3;
+    const groupFilter = isTopLevel 
+      ? (p: any) => p.url.split('/').length === 3
+      : (p: any) => p.url.split('/').length === 4 && p.url.split('/')[2] === product.url.split('/')[2];
+
+    const group = products.filter(groupFilter);
+    const groupIndex = group.indexOf(product);
+    if (groupIndex + direction < 0 || groupIndex + direction >= group.length) return;
+    
+    const swapWith = group[groupIndex + direction];
+    const index1 = products.indexOf(product);
+    const index2 = products.indexOf(swapWith);
+    
+    const temp = products[index1];
+    products[index1] = products[index2];
+    products[index2] = temp;
+  }
+  
+  function moveModel(model: any, direction: number) {
+    const groupFilter = (m: any) => m.productSlug === model.productSlug;
+    const group = models.filter(groupFilter);
+    const groupIndex = group.indexOf(model);
+    if (groupIndex + direction < 0 || groupIndex + direction >= group.length) return;
+    
+    const swapWith = group[groupIndex + direction];
+    const index1 = models.indexOf(model);
+    const index2 = models.indexOf(swapWith);
+    
+    const temp = models[index1];
+    models[index1] = models[index2];
+    models[index2] = temp;
+  }
+
   function deleteIndustry(id: string) {
     if (deleteConfirmIndustry === id) {
       industries = industries.filter((i: any) => i.id !== id);
@@ -258,102 +256,99 @@
           </button>
         </div>
         
-        <div class="grid gap-8">
-          {#each models as model}
-            <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 transition-all hover:border-gray-300 relative overflow-hidden group">
-              <!-- Delete button appearing on hover -->
-              <button onclick={() => deleteModel(model.id)} class="absolute top-4 right-4 text-sm {deleteConfirmModel === model.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all z-10 font-medium">
-                {deleteConfirmModel === model.id ? 'Confirm?' : 'Delete'}
-              </button>
-
-              <div class="flex flex-col md:flex-row gap-8">
-                <div class="w-full md:w-48 h-48 bg-gray-50 rounded-2xl overflow-hidden shrink-0 border border-gray-200 relative group/img cursor-pointer flex items-center justify-center" onclick={() => triggerUpload('image', model)}>
-                  {#if model.imageUrl}
-                    <img src={model.imageUrl} alt={model.name} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" />
-                  {:else}
-                    <div class="w-full h-full flex flex-col items-center justify-center text-gray-400 p-4 text-center group-hover/img:text-primary transition-colors">
-                      <svg class="w-8 h-8 mb-1.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                      <span class="text-xs font-semibold">Upload Image</span>
-                    </div>
-                  {/if}
-                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                    <span class="text-white text-sm font-semibold flex items-center gap-2">
-                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                      {model.imageUrl ? 'Update Image' : 'Upload Image'}
-                    </span>
-                  </div>
-                </div>
-                
-                <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                  <div class="md:col-span-1">
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Model Name</label>
-                    <input bind:value={model.name} class="w-full px-4 py-2.5 text-lg font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-                  </div>
-                  
-                  <div class="md:col-span-1">
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">URL Slug</label>
-                    <input bind:value={model.slug} class="w-full px-4 py-2.5 font-medium font-mono text-sm bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-                  </div>
-                  
-                  <div class="md:col-span-2">
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
-                    <RichTextEditor bind:value={model.description} />
-                  </div>
-                  
-                    <div>
-                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Product Assignment</label>
-                      <div class="relative">
-                        <select bind:value={model.productSlug} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none font-medium pr-10">
-                          {#each products as product}
-                            <option value={product.slug}>{product.name}</option>
-                          {/each}
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        <div class="grid gap-12">
+            
+            {#each productSlugs as pSlug}
+              <div class="bg-gray-50 p-6 rounded-3xl border border-gray-200">
+                <h3 class="text-xl font-bold text-dark mb-6 capitalize px-2">{pSlug.replace(/-/g, ' ')} Models</h3>
+                <div class="grid gap-8">
+                  {#each models.filter(m => (m.productSlug || 'actuators') === pSlug) as model}
+                    {@const isFirst = models.filter(m => (m.productSlug || 'actuators') === pSlug).indexOf(model) === 0}
+                    {@const isLast = models.filter(m => (m.productSlug || 'actuators') === pSlug).indexOf(model) === models.filter(m => (m.productSlug || 'actuators') === pSlug).length - 1}
+                    <div class="bg-white p-8 rounded-3xl shadow-md border border-gray-100 transition-all hover:border-gray-300 relative overflow-hidden group">
+                      <div class="absolute top-4 right-4 flex items-center gap-2 z-10">
+                        <button onclick={() => moveModel(model, -1)} disabled={isFirst} class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 disabled:opacity-50 px-2 py-1.5 rounded-lg transition-all font-medium">&uarr;</button>
+                        <button onclick={() => moveModel(model, 1)} disabled={isLast} class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 disabled:opacity-50 px-2 py-1.5 rounded-lg transition-all font-medium">&darr;</button>
+                        <button onclick={() => deleteModel(model.id)} class="text-sm {deleteConfirmModel === model.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all font-medium">
+                          {deleteConfirmModel === model.id ? 'Confirm?' : 'Delete'}
+                        </button>
+                      </div>
+                      <div class="flex flex-col md:flex-row gap-8">
+                        <div class="w-full md:w-48 h-48 bg-gray-50 rounded-2xl overflow-hidden shrink-0 border border-gray-200 relative group/img cursor-pointer flex items-center justify-center" onclick={() => triggerUpload('image', model)}>
+                          {#if model.imageUrl}
+                            <img src={model.imageUrl} alt={model.name} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" />
+                          {:else}
+                            <span class="text-gray-400 font-medium group-hover/img:text-primary transition-colors">Upload Image</span>
+                          {/if}
+                          {#if isUploading && uploadTarget?.item === model && uploadTarget?.type === 'image'}
+                            <div class="absolute inset-0 bg-white/80 flex items-center justify-center backdrop-blur-sm">
+                              <div class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                          {/if}
+                        </div>
+                        <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Model Name</label>
+                            <input bind:value={model.name} class="w-full px-4 py-2.5 text-lg font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                          </div>
+                          <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Product Assignment</label>
+                            <div class="relative">
+                              <select bind:value={model.productSlug} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none font-medium pr-10">
+                                {#each products as product}
+                                  <option value={product.slug}>{product.name}</option>
+                                {/each}
+                              </select>
+                              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Material</label>
+                            <input bind:value={model.material} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm" />
+                          </div>
+                          <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Pressure Rating</label>
+                            <input bind:value={model.pressureRating} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm" />
+                          </div>
+                          <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Temperature Range</label>
+                            <input bind:value={model.temperatureRange} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm" />
+                          </div>
+                          <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Available Sizes</label>
+                            <input bind:value={model.size} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm" />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-6 flex flex-col md:flex-row items-stretch md:items-start gap-6">
+                        <div class="flex-grow">
+                          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
+                          <RichTextEditor bind:value={model.description} />
+                        </div>
+                        <div class="w-full md:w-64 shrink-0 flex flex-col justify-end">
+                          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Technical PDF</label>
+                          <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-200">
+                            {#if model.pdfUrl}
+                              <a href={model.pdfUrl} target="_blank" class="flex-1 text-xs text-primary font-medium truncate px-2 hover:underline">View PDF</a>
+                            {:else}
+                              <span class="flex-1 text-xs text-gray-400 px-2">No PDF uploaded</span>
+                            {/if}
+                            <button onclick={() => triggerUpload('pdf', model)} class="bg-white text-dark-gray hover:text-primary px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm border border-gray-100 transition-colors">
+                              Upload
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
-
-                  <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Size Range</label>
-                    <input bind:value={model.size} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-                  </div>
-                  
-                  <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Materials</label>
-                    <input bind:value={model.material} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-                  </div>
-
-                  <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Pressure Rating</label>
-                    <input bind:value={model.pressureRating} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-                  </div>
-
-                  <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Temperature Range</label>
-                    <input bind:value={model.temperatureRange} class="w-full px-4 py-2.5 font-medium bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-                  </div>
-                  
-                  <div class="md:col-span-2 p-5 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-200 mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                      <h4 class="font-bold text-dark flex items-center gap-2">
-                        <svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                        Specification PDF
-                      </h4>
-                      <p class="text-sm text-gray-500 mt-1">{model.pdfUrl ? 'PDF document attached and ready for download.' : 'No specification sheet uploaded yet.'}</p>
-                    </div>
-                    <button onclick={() => triggerUpload('pdf', model)} class="px-5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm font-bold text-dark hover:bg-gray-50 hover:border-dark transition-all shadow-sm shrink-0 flex items-center justify-center gap-2">
-                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                      {model.pdfUrl ? 'Replace PDF' : 'Upload PDF'}
-                    </button>
-                  </div>
+                  {/each}
                 </div>
               </div>
-            </div>
-          {/each}
+            {/each}
+          </div>
         </div>
-      </div>
-    {/if}
+      {/if}
 
     {#if activeTab === 'products'}
       <div in:fade={{duration: 250, delay: 50}}>
@@ -367,65 +362,115 @@
             Add Product
           </button>
         </div>
-        <div class="grid gap-6 md:grid-cols-2">
-          {#each products as product}
-            {@const urlParts = product.url.split('/')}
-            {@const isSubproduct = urlParts.length === 4}
-            {@const currentParentSlug = isSubproduct ? urlParts[2] : ''}
-            {@const topLevelCats = products.filter((c: any) => c.url.split('/').length === 3 && c.id !== product.id)}
-            <div class="bg-white p-6 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 relative {isSubproduct ? 'border-l-4 border-l-primary/30' : ''}">
-              <button onclick={() => deleteProduct(product.id)} class="absolute top-4 right-4 text-sm {deleteConfirmProduct === product.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all font-medium">
-                {deleteConfirmProduct === product.id ? 'Confirm?' : 'Delete'}
-              </button>
-              <div class="grid grid-cols-1 gap-4 mt-2">
-                <div>
-                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Product Name</label>
-                  <input bind:value={product.name} oninput={() => {
-                    product.slug = product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                    product.url = isSubproduct ? `/products/${currentParentSlug}/${product.slug}` : `/products/${product.slug}`;
-                  }} class="w-full px-4 py-2.5 text-lg font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Parent Product</label>
-                  <div class="relative">
-                    <select
-                      value={currentParentSlug}
-                      onchange={(e) => {
-                        const parent = (e.target as HTMLSelectElement).value;
-                        product.url = parent ? `/products/${parent}/${product.slug}` : `/products/${product.slug}`;
-                      }}
-                      class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none font-medium pr-10"
-                    >
-                      <option value="">— None (top-level) —</option>
-                      {#each topLevelCats as parent}
-                        <option value={parent.slug}>{parent.name}</option>
-                      {/each}
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
-                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        <div class="grid gap-6">
+            
+            {#each topLevelCats as parent}
+              {@const isFirstParent = topLevelCats.indexOf(parent) === 0}
+              {@const isLastParent = topLevelCats.indexOf(parent) === topLevelCats.length - 1}
+              {@const children = products.filter((c: any) => c.url.split('/').length === 4 && c.url.split('/')[2] === parent.slug)}
+              
+              <div class="bg-gray-50/50 p-6 rounded-3xl border border-gray-200 shadow-sm">
+                <!-- Parent Card -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 relative mb-6">
+                  <div class="absolute top-4 right-4 flex items-center gap-2 z-10">
+                    <button onclick={() => moveProduct(parent, -1)} disabled={isFirstParent} class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 disabled:opacity-50 px-2 py-1.5 rounded-lg transition-all font-medium">&uarr;</button>
+                    <button onclick={() => moveProduct(parent, 1)} disabled={isLastParent} class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 disabled:opacity-50 px-2 py-1.5 rounded-lg transition-all font-medium">&darr;</button>
+                    <button onclick={() => deleteProduct(parent.id)} class="text-sm {deleteConfirmProduct === parent.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all font-medium">
+                      {deleteConfirmProduct === parent.id ? 'Confirm?' : 'Delete'}
+                    </button>
+                  </div>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                    <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Parent Category Name</label>
+                      <input bind:value={parent.name} oninput={() => {
+                        parent.slug = parent.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                        parent.url = `/products/${parent.slug}`;
+                      }} class="w-full px-4 py-2.5 text-lg font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">URL Slug</label>
+                      <div class="flex items-center bg-gray-50 border border-transparent rounded-xl focus-within:bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all overflow-hidden">
+                        <span class="px-3 py-2.5 text-sm font-mono text-gray-400 shrink-0 border-r border-gray-200">/products/</span>
+                        <input bind:value={parent.slug} oninput={() => {
+                          parent.url = `/products/${parent.slug}`;
+                        }} class="flex-1 px-3 py-2.5 font-medium font-mono text-sm bg-transparent outline-none" />
+                      </div>
+                      <p class="text-xs text-gray-400 mt-1 font-mono">+' {parent.url}</p>
+                    </div>
+                    <div class="md:col-span-2">
+                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
+                      <RichTextEditor bind:value={parent.description} />
                     </div>
                   </div>
                 </div>
-                <div>
-                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">URL Slug</label>
-                  <div class="flex items-center bg-gray-50 border border-transparent rounded-xl focus-within:bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all overflow-hidden">
-                    <span class="px-3 py-2.5 text-sm font-mono text-gray-400 shrink-0 border-r border-gray-200">{isSubproduct ? `/products/${currentParentSlug}/` : '/products/'}</span>
-                    <input bind:value={product.slug} oninput={() => {
-                      product.url = isSubproduct ? `/products/${currentParentSlug}/${product.slug}` : `/products/${product.slug}`;
-                    }} class="flex-1 px-3 py-2.5 font-medium font-mono text-sm bg-transparent outline-none" />
+                
+                <!-- Sub-products -->
+                {#if children.length > 0}
+                  <div class="pl-4 md:pl-10 space-y-4 border-l-2 border-primary/20 relative">
+                    <div class="absolute -top-4 left-4 text-xs font-bold text-primary tracking-widest uppercase">Sub-Products</div>
+                    {#each children as child}
+                      {@const isFirstChild = children.indexOf(child) === 0}
+                      {@const isLastChild = children.indexOf(child) === children.length - 1}
+                      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 relative">
+                        <div class="absolute top-4 right-4 flex items-center gap-2 z-10">
+                          <button onclick={() => moveProduct(child, -1)} disabled={isFirstChild} class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 disabled:opacity-50 px-2 py-1.5 rounded-lg transition-all font-medium">&uarr;</button>
+                          <button onclick={() => moveProduct(child, 1)} disabled={isLastChild} class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 disabled:opacity-50 px-2 py-1.5 rounded-lg transition-all font-medium">&darr;</button>
+                          <button onclick={() => deleteProduct(child.id)} class="text-sm {deleteConfirmProduct === child.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all font-medium">
+                            {deleteConfirmProduct === child.id ? 'Confirm?' : 'Delete'}
+                          </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                          <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Sub-Product Name</label>
+                            <input bind:value={child.name} oninput={() => {
+                              child.slug = child.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                              child.url = `/products/${parent.slug}/${child.slug}`;
+                            }} class="w-full px-4 py-2.5 text-base font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                          </div>
+                          <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">URL Slug</label>
+                            <div class="flex items-center bg-gray-50 border border-transparent rounded-xl focus-within:bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all overflow-hidden">
+                              <span class="px-3 py-2.5 text-sm font-mono text-gray-400 shrink-0 border-r border-gray-200">/products/{parent.slug}/</span>
+                              <input bind:value={child.slug} oninput={() => {
+                                child.url = `/products/${parent.slug}/${child.slug}`;
+                              }} class="flex-1 px-3 py-2.5 font-medium font-mono text-sm bg-transparent outline-none" />
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1 font-mono">+' {child.url}</p>
+                          </div>
+                          <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
+                            <RichTextEditor bind:value={child.description} />
+                          </div>
+                        </div>
+                      </div>
+                    {/each}
                   </div>
-                  <p class="text-xs text-gray-400 mt-1 font-mono">→ {product.url}</p>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
-                  <RichTextEditor bind:value={product.description} />
-                </div>
+                {/if}
               </div>
-            </div>
-          {/each}
+            {/each}
+            
+            <!-- Orphaned products -->
+            {#if orphans.length > 0}
+               <div class="bg-red-50/50 p-6 rounded-3xl border border-red-200 mt-8">
+                 <h3 class="text-red-500 font-bold mb-4">Orphaned Sub-Products (Missing Parent)</h3>
+                 <div class="grid gap-4">
+                   {#each orphans as orphan}
+                     <div class="bg-white p-4 rounded-xl border border-red-100 flex justify-between items-center">
+                       <div>
+                         <div class="font-bold">{orphan.name}</div>
+                         <div class="text-xs text-gray-500 font-mono">{orphan.url}</div>
+                       </div>
+                       <button onclick={() => deleteProduct(orphan.id)} class="text-red-500 text-sm font-medium hover:underline">Delete</button>
+                     </div>
+                   {/each}
+                 </div>
+               </div>
+            {/if}
+          </div>
         </div>
-      </div>
-    {/if}
+      {/if}
 
     {#if activeTab === 'industries'}
       <div in:fade={{duration: 250, delay: 50}}>
@@ -671,6 +716,8 @@
     </div>
   </div>
 {/if}
+
+
 
 
 
