@@ -159,6 +159,45 @@
     models[index2] = temp;
   }
 
+  function addProduct() {
+    products = [{
+      id: crypto.randomUUID(),
+      name: 'New Product',
+      slug: 'new-product-' + Date.now(),
+      description: '',
+      url: `/products/new-product-${Date.now()}`
+    }, ...products];
+  }
+
+  function deleteProduct(id: string) {
+    if (deleteConfirmProduct === id) {
+      products = products.filter((p: any) => p.id !== id);
+      deleteConfirmProduct = null;
+    } else {
+      deleteConfirmProduct = id;
+      setTimeout(() => { if (deleteConfirmProduct === id) deleteConfirmProduct = null; }, 3000);
+    }
+  }
+
+  function deleteModel(id: string) {
+    if (deleteConfirmModel === id) {
+      models = models.filter((m: any) => m.id !== id);
+      deleteConfirmModel = null;
+    } else {
+      deleteConfirmModel = id;
+      setTimeout(() => { if (deleteConfirmModel === id) deleteConfirmModel = null; }, 3000);
+    }
+  }
+
+  function addIndustry() {
+    industries = [{
+      id: crypto.randomUUID(),
+      name: 'New Industry',
+      description: '',
+      imageUrl: ''
+    }, ...industries];
+  }
+
   function deleteIndustry(id: string) {
     if (deleteConfirmIndustry === id) {
       industries = industries.filter((i: any) => i.id !== id);
