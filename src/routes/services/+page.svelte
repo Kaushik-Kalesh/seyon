@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import { page } from '$app/state';
   let siteSettings = $derived(page.data.siteSettings || {});
 </script>
@@ -9,15 +9,21 @@
 
 <section class="py-24 bg-white border-b border-gray-100" id="services">
     <div class="page-container">
-        <div class="max-w-3xl mb-16">
-            <span class="text-sm font-bold tracking-widest text-primary uppercase mb-3 block">{@html siteSettings?.home_services_eyebrow}</span>
-            <h1 class="text-4xl md:text-6xl font-bold text-dark mb-6 leading-tight">{@html siteSettings?.home_services_title}</h1>
-            <p class="text-xl text-dark-gray leading-relaxed">{@html siteSettings?.home_services_subtitle}</p>
+        <div class="flex flex-col lg:flex-row gap-12 items-center mb-16">
+            <div class="flex-1 max-w-3xl">
+                <span class="text-sm font-bold tracking-widest text-primary uppercase mb-3 block">{@html siteSettings?.home_services_eyebrow}</span>
+                <h1 class="text-4xl md:text-6xl font-bold text-dark mb-6 leading-tight">{@html siteSettings?.home_services_title}</h1>
+                <p class="text-xl text-dark-gray leading-relaxed">{@html siteSettings?.home_services_subtitle}</p>
+            </div>
+            <div class="flex-1 w-full lg:w-auto relative">
+                <div class="aspect-[16/9] lg:aspect-[4/3] rounded-3xl overflow-hidden shadow-xl border border-gray-100">
+                    <img src={siteSettings?.servicesImage || "https://res.cloudinary.com/wk0v5srj/image/upload/v1788533878/seyon_cms/cucwimhdjozi42du0eto.webp"} alt="Industrial Services" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                </div>
+            </div>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
             <article class="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:border-primary/30 transition-all group relative overflow-hidden">
-                <div class="text-4xl font-serif font-black text-gray-200 absolute top-4 right-4 opacity-50 group-hover:text-primary/10 transition-colors">01</div>
                 <h3 class="text-xl font-bold text-dark mb-3 relative z-10">{@html siteSettings?.home_service1_title}</h3>
                 <p class="text-gray-600 mb-6 relative z-10">{@html siteSettings?.home_service1_desc}</p>
                 <ul class="space-y-2 relative z-10">
@@ -29,7 +35,6 @@
                 </ul>
             </article>
             <article class="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:border-primary/30 transition-all group relative overflow-hidden">
-                <div class="text-4xl font-serif font-black text-gray-200 absolute top-4 right-4 opacity-50 group-hover:text-primary/10 transition-colors">02</div>
                 <h3 class="text-xl font-bold text-dark mb-3 relative z-10">{@html siteSettings?.home_service2_title}</h3>
                 <p class="text-gray-600 mb-6 relative z-10">{@html siteSettings?.home_service2_desc}</p>
                 <ul class="space-y-2 relative z-10">
@@ -41,7 +46,6 @@
                 </ul>
             </article>
             <article class="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:border-primary/30 transition-all group relative overflow-hidden">
-                <div class="text-4xl font-serif font-black text-gray-200 absolute top-4 right-4 opacity-50 group-hover:text-primary/10 transition-colors">03</div>
                 <h3 class="text-xl font-bold text-dark mb-3 relative z-10">{@html siteSettings?.home_service3_title}</h3>
                 <p class="text-gray-600 mb-6 relative z-10">{@html siteSettings?.home_service3_desc}</p>
                 <ul class="space-y-2 relative z-10">
@@ -53,7 +57,6 @@
                 </ul>
             </article>
             <article class="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:border-primary/30 transition-all group relative overflow-hidden">
-                <div class="text-4xl font-serif font-black text-gray-200 absolute top-4 right-4 opacity-50 group-hover:text-primary/10 transition-colors">04</div>
                 <h3 class="text-xl font-bold text-dark mb-3 relative z-10">{@html siteSettings?.home_service4_title}</h3>
                 <p class="text-gray-600 mb-6 relative z-10">{@html siteSettings?.home_service4_desc}</p>
                 <ul class="space-y-2 relative z-10">
@@ -78,3 +81,4 @@
         </div>
     </div>
 </section>
+

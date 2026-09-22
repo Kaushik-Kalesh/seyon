@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import { fade, slide } from 'svelte/transition';
   import RichTextEditor from '$lib/components/RichTextEditor.svelte';
   let { data } = $props();
@@ -674,7 +674,20 @@
               </div>
             </div>
 
-            <h4 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4 border-t border-gray-100 pt-6">About Page</h4>
+              <h4 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4 border-t border-gray-100 pt-6">Services Page</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 mb-1.5">Services Header Image</label>
+                  <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img" onclick={() => triggerUpload('image', siteSettings, 'servicesImage')}>
+                    <img src={siteSettings.servicesImage || 'https://res.cloudinary.com/wk0v5srj/image/upload/v1788533878/seyon_cms/cucwimhdjozi42du0eto.webp'} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt="Services Header"/>
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                      <span class="text-white text-sm font-semibold flex items-center gap-2">Update</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <h4 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4 border-t border-gray-100 pt-6">About Page</h4>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div class="col-span-2 md:col-span-4">
                 <label class="block text-xs font-bold text-gray-500 mb-1.5">Hero Background</label>
