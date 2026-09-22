@@ -170,11 +170,7 @@ function enrichData(data: any) {
         return parts.length === 4 && parts[2] === product.slug;
       });
       product.subItems = subProducts.map((sub: any) => ({
-        id: sub.id,
-        name: sub.name,
-        slug: sub.slug,
-        url: sub.url,
-        description: sub.description
+        ...sub
       }));
     } else {
       product.subItems = [];

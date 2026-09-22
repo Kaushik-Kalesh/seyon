@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
   import { fade, slide } from 'svelte/transition';
   import RichTextEditor from '$lib/components/RichTextEditor.svelte';
   let { data } = $props();
@@ -298,7 +298,7 @@
         <div class="grid gap-12">
             
             {#each productSlugs as pSlug}
-              <div class="bg-gray-50 p-6 rounded-3xl border border-gray-200">
+              <div class="bg-gray-50 p-6 rounded-3xl border border-gray-200 text-gray-900">
                 <h3 class="text-xl font-bold text-dark mb-6 capitalize px-2">{pSlug.replace(/-/g, ' ')} Models</h3>
                 <div class="grid gap-8">
                   {#each models.filter(m => (m.productSlug || 'actuators') === pSlug) as model}
@@ -313,7 +313,7 @@
                         </button>
                       </div>
                       <div class="flex flex-col md:flex-row gap-8">
-                        <div class="w-full md:w-48 h-48 bg-gray-50 rounded-2xl overflow-hidden shrink-0 border border-gray-200 relative group/img cursor-pointer flex items-center justify-center" onclick={() => triggerUpload('image', model)}>
+                        <div class="w-full md:w-48 h-48 bg-gray-50 rounded-2xl overflow-hidden shrink-0 border border-gray-200 relative group/img cursor-pointer flex items-center justify-center text-gray-900" onclick={() => triggerUpload('image', model)}>
                           {#if model.imageUrl}
                             <img src={model.imageUrl} alt={model.name} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" />
                           {:else}
@@ -325,15 +325,19 @@
                             </div>
                           {/if}
                         </div>
-                        <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex-grow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                           <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Model Name</label>
-                            <input bind:value={model.name} class="w-full px-4 py-2.5 text-lg font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                            <input bind:value={model.name} class="w-full px-4 py-2.5 text-lg font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-gray-900" />
+                          </div>
+                          <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">URL Slug</label>
+                            <input bind:value={model.slug} class="w-full px-4 py-2.5 font-medium font-mono text-sm bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-gray-900" />
                           </div>
                           <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Product Assignment</label>
                             <div class="relative">
-                              <select bind:value={model.productSlug} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none font-medium pr-10">
+                              <select bind:value={model.productSlug} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none font-medium pr-10 text-gray-900">
                                 {#each products as product}
                                   <option value={product.slug}>{product.name}</option>
                                 {/each}
@@ -343,21 +347,33 @@
                               </div>
                             </div>
                           </div>
-                          <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Material</label>
-                            <input bind:value={model.material} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm" />
-                          </div>
-                          <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Pressure Rating</label>
-                            <input bind:value={model.pressureRating} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm" />
-                          </div>
-                          <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Temperature Range</label>
-                            <input bind:value={model.temperatureRange} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm" />
-                          </div>
-                          <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Available Sizes</label>
-                            <input bind:value={model.size} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm" />
+                          
+                          <!-- Specifications -->
+                          <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
+                            <div>
+                              {#if model.productSlug !== 'instrumentation-products'}
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Material</label>
+                              {/if}
+                              <input bind:value={model.material} placeholder={model.productSlug === 'instrumentation-products' ? 'Spec 1 (e.g. Range)' : ''} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm text-gray-900" />
+                            </div>
+                            <div>
+                              {#if model.productSlug !== 'instrumentation-products'}
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Pressure Rating</label>
+                              {/if}
+                              <input bind:value={model.pressureRating} placeholder={model.productSlug === 'instrumentation-products' ? 'Spec 2 (e.g. Output)' : ''} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm text-gray-900" />
+                            </div>
+                            <div>
+                              {#if model.productSlug !== 'instrumentation-products'}
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Temperature Range</label>
+                              {/if}
+                              <input bind:value={model.temperatureRange} placeholder={model.productSlug === 'instrumentation-products' ? 'Spec 3 (e.g. Accuracy)' : ''} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm text-gray-900" />
+                            </div>
+                            <div>
+                              {#if model.productSlug !== 'instrumentation-products'}
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Available Sizes</label>
+                              {/if}
+                              <input bind:value={model.size} placeholder={model.productSlug === 'instrumentation-products' ? 'Spec 4 (e.g. Connection)' : ''} class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm text-gray-900" />
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -368,7 +384,7 @@
                         </div>
                         <div class="w-full md:w-64 shrink-0 flex flex-col justify-end">
                           <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Technical PDF</label>
-                          <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-200">
+                          <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-200 text-gray-900">
                             {#if model.pdfUrl}
                               <a href={model.pdfUrl} target="_blank" class="flex-1 text-xs text-primary font-medium truncate px-2 hover:underline">View PDF</a>
                             {:else}
@@ -402,111 +418,96 @@
           </button>
         </div>
         <div class="grid gap-6">
-            
-            {#each topLevelCats as parent}
-              {@const isFirstParent = topLevelCats.indexOf(parent) === 0}
-              {@const isLastParent = topLevelCats.indexOf(parent) === topLevelCats.length - 1}
-              {@const children = products.filter((c: any) => c.url.split('/').length === 4 && c.url.split('/')[2] === parent.slug)}
+          {#snippet productCard(product, isFirst, isLast, isOrphan)}
+            <div class="bg-white p-6 rounded-2xl shadow-md border {isOrphan ? 'border-red-300 bg-red-50/10' : 'border-gray-100'} relative mb-6">
+              <div class="absolute top-4 right-4 flex items-center gap-2 z-10">
+                <button onclick={() => moveProduct(product, -1)} disabled={isFirst} class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 disabled:opacity-50 px-2 py-1.5 rounded-lg transition-all font-medium">&uarr;</button>
+                <button onclick={() => moveProduct(product, 1)} disabled={isLast} class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 disabled:opacity-50 px-2 py-1.5 rounded-lg transition-all font-medium">&darr;</button>
+                <button onclick={() => deleteProduct(product.id)} class="text-sm {deleteConfirmProduct === product.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all font-medium">
+                  {deleteConfirmProduct === product.id ? 'Confirm?' : 'Delete'}
+                </button>
+              </div>
               
-              <div class="bg-gray-50/50 p-6 rounded-3xl border border-gray-200 shadow-sm">
-                <!-- Parent Card -->
-                <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 relative mb-6">
-                  <div class="absolute top-4 right-4 flex items-center gap-2 z-10">
-                    <button onclick={() => moveProduct(parent, -1)} disabled={isFirstParent} class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 disabled:opacity-50 px-2 py-1.5 rounded-lg transition-all font-medium">&uarr;</button>
-                    <button onclick={() => moveProduct(parent, 1)} disabled={isLastParent} class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 disabled:opacity-50 px-2 py-1.5 rounded-lg transition-all font-medium">&darr;</button>
-                    <button onclick={() => deleteProduct(parent.id)} class="text-sm {deleteConfirmProduct === parent.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all font-medium">
-                      {deleteConfirmProduct === parent.id ? 'Confirm?' : 'Delete'}
-                    </button>
-                  </div>
-                  
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                    <div>
-                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Parent Category Name</label>
-                      <input bind:value={parent.name} oninput={() => {
-                        parent.slug = parent.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                        parent.url = `/products/${parent.slug}`;
-                      }} class="w-full px-4 py-2.5 text-lg font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-                    </div>
-                    <div>
-                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">URL Slug</label>
-                      <div class="flex items-center bg-gray-50 border border-transparent rounded-xl focus-within:bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all overflow-hidden">
-                        <span class="px-3 py-2.5 text-sm font-mono text-gray-400 shrink-0 border-r border-gray-200">/products/</span>
-                        <input bind:value={parent.slug} oninput={() => {
-                          parent.url = `/products/${parent.slug}`;
-                        }} class="flex-1 px-3 py-2.5 font-medium font-mono text-sm bg-transparent outline-none" />
-                      </div>
-                      <p class="text-xs text-gray-400 mt-1 font-mono">+' {parent.url}</p>
-                    </div>
-                    <div class="md:col-span-2">
-                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
-                      <RichTextEditor bind:value={parent.description} />
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Product Name</label>
+                  <input bind:value={product.name} class="w-full px-4 py-2.5 text-base font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-gray-900" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Parent Category</label>
+                  <div class="relative">
+                    <select
+                      value={product.url.split('/').length === 4 ? product.url.split('/')[2] : ''}
+                      onchange={(e) => {
+                        const parent = (e.target as HTMLSelectElement).value;
+                        product.url = parent ? `/products/${parent}/${product.slug}` : `/products/${product.slug}`;
+                      }}
+                      class="w-full px-4 py-2.5 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none font-medium pr-10 text-sm text-gray-900"
+                    >
+                      <option value="">None (Top-Level)</option>
+                      {#each topLevelCats as p}
+                        {#if p.id !== product.id}
+                          <option value={p.slug}>{p.name}</option>
+                        {/if}
+                      {/each}
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                   </div>
                 </div>
-                
-                <!-- Sub-products -->
-                {#if children.length > 0}
-                  <div class="pl-4 md:pl-10 space-y-4 border-l-2 border-primary/20 relative">
-                    <div class="absolute -top-4 left-4 text-xs font-bold text-primary tracking-widest uppercase">Sub-Products</div>
-                    {#each children as child}
-                      {@const isFirstChild = children.indexOf(child) === 0}
-                      {@const isLastChild = children.indexOf(child) === children.length - 1}
-                      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 relative">
-                        <div class="absolute top-4 right-4 flex items-center gap-2 z-10">
-                          <button onclick={() => moveProduct(child, -1)} disabled={isFirstChild} class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 disabled:opacity-50 px-2 py-1.5 rounded-lg transition-all font-medium">&uarr;</button>
-                          <button onclick={() => moveProduct(child, 1)} disabled={isLastChild} class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 disabled:opacity-50 px-2 py-1.5 rounded-lg transition-all font-medium">&darr;</button>
-                          <button onclick={() => deleteProduct(child.id)} class="text-sm {deleteConfirmProduct === child.id ? 'bg-red-500 text-white' : 'text-red-400 hover:text-red-600 hover:bg-red-50'} px-3 py-1.5 rounded-lg transition-all font-medium">
-                            {deleteConfirmProduct === child.id ? 'Confirm?' : 'Delete'}
-                          </button>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                          <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Sub-Product Name</label>
-                            <input bind:value={child.name} oninput={() => {
-                              child.slug = child.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                              child.url = `/products/${parent.slug}/${child.slug}`;
-                            }} class="w-full px-4 py-2.5 text-base font-semibold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
-                          </div>
-                          <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">URL Slug</label>
-                            <div class="flex items-center bg-gray-50 border border-transparent rounded-xl focus-within:bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all overflow-hidden">
-                              <span class="px-3 py-2.5 text-sm font-mono text-gray-400 shrink-0 border-r border-gray-200">/products/{parent.slug}/</span>
-                              <input bind:value={child.slug} oninput={() => {
-                                child.url = `/products/${parent.slug}/${child.slug}`;
-                              }} class="flex-1 px-3 py-2.5 font-medium font-mono text-sm bg-transparent outline-none" />
-                            </div>
-                            <p class="text-xs text-gray-400 mt-1 font-mono">+' {child.url}</p>
-                          </div>
-                          <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
-                            <RichTextEditor bind:value={child.description} />
-                          </div>
-                        </div>
-                      </div>
-                    {/each}
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">URL Slug</label>
+                  <div class="flex items-center bg-gray-50 border border-transparent rounded-xl focus-within:bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all overflow-hidden text-gray-900">
+                    <span class="px-3 py-2.5 text-sm font-mono text-gray-400 shrink-0 border-r border-gray-200">/products/{product.url.split('/').length === 4 ? product.url.split('/')[2] + '/' : ''}</span>
+                    <input bind:value={product.slug} oninput={() => {
+                      const parent = product.url.split('/').length === 4 ? product.url.split('/')[2] : '';
+                      product.url = parent ? `/products/${parent}/${product.slug}` : `/products/${product.slug}`;
+                    }} class="flex-1 px-3 py-2.5 font-medium font-mono text-sm bg-transparent outline-none w-full min-w-0" />
                   </div>
-                {/if}
+                  <p class="text-xs text-gray-400 mt-1 font-mono">-> {product.url}</p>
+                </div>
+                <div class="lg:col-span-3">
+                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
+                  <RichTextEditor bind:value={product.description} />
+                </div>
               </div>
-            {/each}
+            </div>
+          {/snippet}
+
+          {#each topLevelCats as parent}
+            {@const isFirstParent = topLevelCats.indexOf(parent) === 0}
+            {@const isLastParent = topLevelCats.indexOf(parent) === topLevelCats.length - 1}
+            {@const children = products.filter((c: any) => c.url.split('/').length === 4 && c.url.split('/')[2] === parent.slug)}
             
-            <!-- Orphaned products -->
-            {#if orphans.length > 0}
-               <div class="bg-red-50/50 p-6 rounded-3xl border border-red-200 mt-8">
-                 <h3 class="text-red-500 font-bold mb-4">Orphaned Sub-Products (Missing Parent)</h3>
-                 <div class="grid gap-4">
-                   {#each orphans as orphan}
-                     <div class="bg-white p-4 rounded-xl border border-red-100 flex justify-between items-center">
-                       <div>
-                         <div class="font-bold">{orphan.name}</div>
-                         <div class="text-xs text-gray-500 font-mono">{orphan.url}</div>
-                       </div>
-                       <button onclick={() => deleteProduct(orphan.id)} class="text-red-500 text-sm font-medium hover:underline">Delete</button>
-                     </div>
-                   {/each}
-                 </div>
-               </div>
-            {/if}
+            <div class="bg-gray-50/50 p-6 rounded-3xl border border-gray-200 shadow-sm text-gray-900">
+              <!-- Parent Card -->
+              {@render productCard(parent, isFirstParent, isLastParent, false)}
+              
+              <!-- Sub-products -->
+              {#if children.length > 0}
+                <div class="pl-4 md:pl-10 space-y-4 border-l-2 border-primary/20 relative">
+                  <div class="absolute -top-4 left-4 text-xs font-bold text-primary tracking-widest uppercase">Sub-Products</div>
+                  {#each children as child}
+                    {@const isFirstChild = children.indexOf(child) === 0}
+                    {@const isLastChild = children.indexOf(child) === children.length - 1}
+                    {@render productCard(child, isFirstChild, isLastChild, false)}
+                  {/each}
+                </div>
+              {/if}
+            </div>
+          {/each}
+          
+          <!-- Orphaned products -->
+          {#if orphans.length > 0}
+             <div class="bg-red-50/50 p-6 rounded-3xl border border-red-200 mt-8">
+               <h3 class="text-red-500 font-bold mb-4">Orphaned Sub-Products (Missing Parent)</h3>
+               <p class="text-sm text-red-400 mb-6">Assign these products to a valid parent category, or set them to Top-Level.</p>
+               {#each orphans as orphan}
+                 {@render productCard(orphan, true, true, true)}
+               {/each}
+             </div>
+          {/if}
           </div>
         </div>
       {/if}
@@ -533,7 +534,7 @@
                  <div class="flex gap-4 mb-4">
                    <div class="flex-grow">
                      <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Industry Name</label>
-                     <input bind:value={industry.name} class="w-full px-4 py-2.5 text-xl font-bold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" />
+                     <input bind:value={industry.name} class="w-full px-4 py-2.5 text-xl font-bold bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-gray-900" />
                    </div>
                    
                  </div>
@@ -541,7 +542,7 @@
                  <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
                  <RichTextEditor bind:value={industry.description} />
                  
-                  <div class="relative w-full h-48 rounded-xl overflow-hidden border border-gray-200 mt-auto cursor-pointer group/img flex items-center justify-center bg-gray-50" onclick={() => triggerUpload('image', industry)}>
+                  <div class="relative w-full h-48 rounded-xl overflow-hidden border border-gray-200 mt-auto cursor-pointer group/img flex items-center justify-center bg-gray-50 text-gray-900" onclick={() => triggerUpload('image', industry)}>
                     {#if industry.imageUrl}
                       <img src={industry.imageUrl} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt={industry.name}/>
                     {:else}
@@ -584,7 +585,7 @@
                 {deleteConfirmBrand === brand.id ? 'Confirm?' : 'Delete'}
               </button>
 
-              <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 mt-auto cursor-pointer group/img flex items-center justify-center bg-gray-50" onclick={() => triggerUpload('image', brand, 'imageUrl')}>
+              <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 mt-auto cursor-pointer group/img flex items-center justify-center bg-gray-50 text-gray-900" onclick={() => triggerUpload('image', brand, 'imageUrl')}>
                 {#if brand.imageUrl}
                   <img src={brand.imageUrl} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" alt={brand.name}/>
                 {:else}
@@ -622,7 +623,7 @@
                 <p class="text-sm text-gray-500 mt-1">Search and edit all website text content.</p>
               </div>
               <div class="relative w-72">
-                <input bind:value={replaceSearch} placeholder="Search content..." class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm" />
+                <input bind:value={replaceSearch} placeholder="Search content..." class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm text-gray-900" />
                 <svg class="w-4 h-4 text-gray-400 absolute left-4 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               </div>
             </div>
@@ -630,7 +631,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {#if replaceSearch.trim().length > 0}
                 {#each Object.keys(siteSettings).filter(k => !k.includes('Image') && (k.toLowerCase().includes(replaceSearch.toLowerCase()) || (siteSettings[k]||'').toLowerCase().includes(replaceSearch.toLowerCase()))) as key}
-                  <div class="border border-gray-100 rounded-xl p-4 hover:border-primary/40 hover:shadow-md transition-all cursor-pointer bg-gray-50 hover:bg-white group flex flex-col h-full" onclick={() => openEditor(key)}>
+                  <div class="border border-gray-100 rounded-xl p-4 hover:border-primary/40 hover:shadow-md transition-all cursor-pointer bg-gray-50 hover:bg-white group flex flex-col h-full text-gray-900" onclick={() => openEditor(key)}>
                     <div class="text-xs font-bold text-primary mb-2 font-mono break-all">{key}</div>
                     {#if siteSettings[key] && String(siteSettings[key]).replace(/<[^>]*>?/gm, '').trim()}
                       <div class="text-sm text-dark-gray line-clamp-3 leading-relaxed flex-grow">{@html siteSettings[key]}</div>
@@ -640,7 +641,7 @@
                   </div>
                 {/each}
               {:else}
-                <div class="col-span-full py-16 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                <div class="col-span-full py-16 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200 text-gray-900">
                   <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                   <p class="text-gray-500 font-medium">Type in the search box to find and edit text content.</p>
                 </div>
@@ -740,7 +741,7 @@
       
       <div class="mb-6">
         <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Content Key</label>
-        <div class="px-4 py-2.5 font-mono text-sm bg-gray-50 rounded-xl text-primary border border-gray-100">{editingKey}</div>
+        <div class="px-4 py-2.5 font-mono text-sm bg-gray-50 rounded-xl text-primary border border-gray-100 text-gray-900">{editingKey}</div>
       </div>
 
       <div class="mb-8">
@@ -755,6 +756,8 @@
     </div>
   </div>
 {/if}
+
+
 
 
 
