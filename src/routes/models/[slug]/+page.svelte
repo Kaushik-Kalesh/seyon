@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   let { data } = $props();
   let { model } = $derived(data);
 </script>
@@ -56,24 +56,32 @@
         <div class="text-lg text-dark-gray mb-10 leading-relaxed prose prose-sm max-w-none">{@html model.description}</div>
         
         <div class="border-t border-gray-100 pt-8 mb-10">
-          <h3 class="text-xl font-bold text-dark mb-6">Technical Specifications</h3>
+          <h3 class="text-xl font-bold text-dark mb-6">{product?.name === 'Instrumentation Products' ? 'Specifications' : 'Technical Specifications'}</h3>
           <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-            <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
-              <dt class="text-sm font-medium text-dark-gray mb-1">Material</dt>
-              <dd class="text-base font-semibold text-dark">{model.material}</dd>
-            </div>
-            <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
-              <dt class="text-sm font-medium text-dark-gray mb-1">Pressure Rating</dt>
-              <dd class="text-base font-semibold text-dark">{model.pressureRating}</dd>
-            </div>
-            <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
-              <dt class="text-sm font-medium text-dark-gray mb-1">Temperature Range</dt>
-              <dd class="text-base font-semibold text-dark">{model.temperatureRange}</dd>
-            </div>
-            <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
-              <dt class="text-sm font-medium text-dark-gray mb-1">Available Sizes</dt>
-              <dd class="text-base font-semibold text-dark">{model.size}</dd>
-            </div>
+            {#if model.material}
+              <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
+                {#if product?.name !== 'Instrumentation Products'}<dt class="text-sm font-medium text-dark-gray mb-1">Material</dt>{/if}
+                <dd class="text-base font-semibold text-dark">{model.material}</dd>
+              </div>
+            {/if}
+            {#if model.pressureRating}
+              <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
+                {#if product?.name !== 'Instrumentation Products'}<dt class="text-sm font-medium text-dark-gray mb-1">Pressure Rating</dt>{/if}
+                <dd class="text-base font-semibold text-dark">{model.pressureRating}</dd>
+              </div>
+            {/if}
+            {#if model.temperatureRange}
+              <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
+                {#if product?.name !== 'Instrumentation Products'}<dt class="text-sm font-medium text-dark-gray mb-1">Temperature Range</dt>{/if}
+                <dd class="text-base font-semibold text-dark">{model.temperatureRange}</dd>
+              </div>
+            {/if}
+            {#if model.size}
+              <div class="bg-base p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors">
+                {#if product?.name !== 'Instrumentation Products'}<dt class="text-sm font-medium text-dark-gray mb-1">Available Sizes</dt>{/if}
+                <dd class="text-base font-semibold text-dark">{model.size}</dd>
+              </div>
+            {/if}
           </dl>
         </div>
         
