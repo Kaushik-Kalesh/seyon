@@ -1,4 +1,4 @@
-import { Redis } from '@upstash/redis';
+﻿import { Redis } from '@upstash/redis';
 import fs from 'fs';
 import path from 'path';
 
@@ -48,7 +48,7 @@ const defaultSettings = {
   home_about_stats_text: 'Years of industrial excellence and innovation.',
   home_about_title: 'Precision flow control.\nPractical industrial solutions.',
   home_about_desc1: 'Automated on/off models, manual models, model automation, multibrand MRO & AMC, and field instrumentation - for process industries, projects, and plant maintenance.',
-  home_about_desc2: 'Industrial models, control models, lined models, spares, and accessories — in stock, ready to supply.',
+  home_about_desc2: 'Industrial models, control models, lined models, spares, and accessories â€” in stock, ready to supply.',
   home_about_link: 'Read Our Story',
   home_industries_title: 'Industries We Serve',
   home_industries_subtitle: 'Tailored model solutions for specialized industrial requirements.',
@@ -81,6 +81,9 @@ const defaultSettings = {
   brands_hero_title: 'Our Trusted Brands',
   brands_hero_subtitle: 'Partnering with industry leaders to bring you the best in model technology.',
   brands_empty_text: 'Check back soon for our partners and brand collaborations.',
+    products_hero_title: 'Our Models',
+    globalLogoImage: '/logo.png',
+    products_hero_subtitle: 'Explore our comprehensive range of high-performance industrial models and automation solutions.',
   home_services_eyebrow: 'VALVE SERVICES',
   home_services_title: 'Keep your models running.<br><span>Not just supplied.</span>',
   home_services_subtitle: 'Multibrand MRO and Annual Maintenance Contract support for industrial model assets, helping plants improve availability, maintenance response and lifecycle management.',
@@ -98,7 +101,7 @@ const defaultSettings = {
   home_service4_list: 'Shutdown requirements\nEmergency replacement\nTechnical enquiry support',
   home_services_banner_strong: 'Have a multibrand model population?',
   home_services_banner_text: 'Share your model list, tag numbers or maintenance requirement for an MRO / AMC discussion.',
-  home_services_banner_btn: 'Discuss Your Requirement →',
+  home_services_banner_btn: 'Discuss Your Requirement â†’',
   home_instrumentation_eyebrow: 'FIELD INSTRUMENTATION',
   home_instrumentation_title: 'One package for <span>flow control &amp; measurement.</span>',
   home_instrumentation_subtitle: 'Expand your procurement through one partner with field instruments covering key process variables and analysers.',
@@ -125,7 +128,7 @@ const defaultSettings = {
   home_package_eyebrow: 'PACKAGE SUPPLIER',
   home_package_title: 'Mechanical + Automation + Instrumentation',
   home_package_subtitle: 'From model selection and automation to field measurement, Seyon can support a more complete process package.',
-  home_package_btn: 'Build a Package Enquiry →',
+  home_package_btn: 'Build a Package Enquiry â†’',
   home_workflow_eyebrow: 'HOW WE WORK',
   home_workflow_title: 'Simple process. Better model decisions.',
   home_workflow1_title: 'Understand',
@@ -237,3 +240,6 @@ export async function saveData(data: any) {
     }
   }
 }
+
+
+

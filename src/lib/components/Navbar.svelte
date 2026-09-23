@@ -6,6 +6,7 @@
 
     let { data } = $derived(page);
     let products = $derived(data.products || []);
+    let siteSettings = $derived(data.siteSettings || {});
 
     const links = [
         { name: "Home", href: "/" },
@@ -27,7 +28,7 @@
                 <!-- Logo -->
                 <a href="/" class="flex items-center gap-3 group">
                     <img
-                        src="/logo.png"
+                        src={siteSettings?.globalLogoImage || "/logo.png"}
                         alt="Seyon Logo"
                         class="h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
                     />
@@ -194,6 +195,8 @@
         </div>
     {/if}
 </nav>
+
+
 
 
 

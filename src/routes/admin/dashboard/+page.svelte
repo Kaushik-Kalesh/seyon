@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
   import { fade, slide } from 'svelte/transition';
   import RichTextEditor from '$lib/components/RichTextEditor.svelte';
   let { data } = $props();
@@ -636,7 +636,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {#if replaceSearch.trim().length > 0}
-                {#each Object.keys(siteSettings).filter(k => !k.includes('Image') && (k.toLowerCase().includes(replaceSearch.toLowerCase()) || (siteSettings[k]||'').toLowerCase().includes(replaceSearch.toLowerCase()))) as key}
+                {#each Object.keys(siteSettings).filter(k => !k.includes('Image') && (k.toLowerCase().includes(replaceSearch.toLowerCase()) || String(siteSettings[k]||'').replace(/<[^>]*>?/gm, '').toLowerCase().includes(replaceSearch.toLowerCase()))) as key}
                   <div class="border border-gray-100 rounded-xl p-4 hover:border-primary/40 hover:shadow-md transition-all cursor-pointer bg-gray-50 hover:bg-white group flex flex-col h-full text-gray-900" onclick={() => openEditor(key)}>
                     <div class="text-xs font-bold text-primary mb-2 font-mono break-all">{key}</div>
                     {#if siteSettings[key] && String(siteSettings[key]).replace(/<[^>]*>?/gm, '').trim()}
@@ -657,8 +657,21 @@
 
           <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 max-w-5xl">
             <h3 class="text-xl font-bold text-dark mb-6">Global Images</h3>
-            
-            <h4 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Home Page</h4>
+              
+              <h4 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Site Branding</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 mb-1.5">Navbar Logo</label>
+                  <div class="relative w-full h-32 rounded-xl overflow-hidden border border-gray-200 cursor-pointer group/img bg-gray-50" onclick={() => triggerUpload('image', siteSettings, 'globalLogoImage')}>
+                    <img src={siteSettings.globalLogoImage || '/logo.png'} class="w-full h-full object-contain p-4 transition-transform group-hover/img:scale-105" alt="Site Logo"/>
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                      <span class="text-white text-sm font-semibold flex items-center gap-2">Update</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <h4 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4 border-t border-gray-100 pt-6">Home Page</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div>
                 <label class="block text-xs font-bold text-gray-500 mb-1.5">Hero Background</label>
@@ -775,6 +788,12 @@
     </div>
   </div>
 {/if}
+
+
+
+
+
+
 
 
 
