@@ -38,7 +38,15 @@
                 href="/contact"
                 class="px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all hover:scale-105 shadow-lg shadow-primary/25"
             >
-                {@html siteSettings?.home_hero_btn2}
+                {@html siteSettings?.home_hero_btn1 || 'Request a Quote'}
+            </a>
+            <a
+                href="https://wa.me/919884725066"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="px-8 py-4 bg-white text-dark font-medium rounded-full hover:bg-gray-50 transition-all hover:scale-105 shadow-lg"
+            >
+                {@html siteSettings?.home_hero_btn2 || 'WhatsApp an Engineer'}
             </a>
         </div>
     </div>

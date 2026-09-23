@@ -179,6 +179,7 @@ function enrichData(data: any) {
 
   data.models.forEach((v: any) => {
     if (!v.productSlug) v.productSlug = data.products[0]?.slug || 'actuators';
+    if (!v.slug && v.name) v.slug = v.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   });
 
   return {

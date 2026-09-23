@@ -281,7 +281,7 @@
   <input type="file" bind:this={fileInputRef} onchange={handleFileUpload} accept={uploadTarget?.type === 'pdf' ? '.pdf' : 'image/*'} class="hidden" />
 
   <!-- Main Content Area -->
-  <main class="flex-grow p-8 max-w-7xl mx-auto w-full">
+  <main class="flex-grow p-8 max-w-[100rem] mx-auto w-full">
     {#if activeTab === 'models'}
       <div in:fade={{duration: 250, delay: 50}}>
         <div class="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
@@ -313,12 +313,15 @@
                         </button>
                       </div>
                       <div class="flex flex-col md:flex-row gap-8">
-                        <div class="w-full md:w-48 h-48 bg-gray-50 rounded-2xl overflow-hidden shrink-0 border border-gray-200 relative group/img cursor-pointer flex items-center justify-center text-gray-900" onclick={() => triggerUpload('image', model)}>
+                        <div class="w-full md:w-72 h-48 bg-gray-50 rounded-2xl overflow-hidden shrink-0 border border-gray-200 relative group/img cursor-pointer flex items-center justify-center text-gray-900" onclick={() => triggerUpload('image', model)}>
                           {#if model.imageUrl}
                             <img src={model.imageUrl} alt={model.name} class="w-full h-full object-cover transition-transform group-hover/img:scale-105" />
                           {:else}
                             <span class="text-gray-400 font-medium group-hover/img:text-primary transition-colors">Upload Image</span>
                           {/if}
+                          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                            <span class="text-white text-sm font-semibold flex items-center gap-2">Update</span>
+                          </div>
                           {#if isUploading && uploadTarget?.item === model && uploadTarget?.type === 'image'}
                             <div class="absolute inset-0 bg-white/80 flex items-center justify-center backdrop-blur-sm">
                               <div class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -332,7 +335,10 @@
                           </div>
                           <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">URL Slug</label>
-                            <input bind:value={model.slug} class="w-full px-4 py-2.5 font-medium font-mono text-sm bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-gray-900" />
+                            <div class="flex items-center bg-gray-50 border border-transparent rounded-xl focus-within:bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all overflow-hidden text-gray-900">
+                              <span class="px-3 py-2.5 text-sm font-mono text-gray-400 shrink-0 border-r border-gray-200">/models/</span>
+                              <input bind:value={model.slug} class="flex-1 px-3 py-2.5 font-medium font-mono text-sm bg-transparent outline-none w-full min-w-0" />
+                            </div>
                           </div>
                           <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Product Assignment</label>
