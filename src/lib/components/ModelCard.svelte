@@ -20,10 +20,10 @@
     <div class="text-xs font-semibold text-primary uppercase tracking-wider mb-2">
       {(model.productSlug || model.industrySlug || '').replace(/-/g, ' ')}
     </div>
-    <h3 class="text-xl font-serif font-bold text-dark mb-2 group-hover:text-primary transition-colors duration-300">
+    <h3 class="text-xl font-serif font-bold text-dark group-hover:text-primary transition-colors duration-300">
       {model.name}
     </h3>
-    <div class="text-sm text-dark-gray line-clamp-2 prose prose-sm max-w-none">{@html model.description}</div>
   </div>
 </a>
+
 
