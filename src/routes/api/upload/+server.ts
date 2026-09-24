@@ -7,7 +7,6 @@ export async function POST({ request, cookies }) {
     return json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
 
-  // Configure Cloudinary with environment variables
   cloudinary.config({ 
     cloud_name: env.CLOUDINARY_CLOUD_NAME, 
     api_key: env.CLOUDINARY_API_KEY, 
@@ -17,21 +16,35 @@ export async function POST({ request, cookies }) {
   try {
     const data = await request.formData();
     const file = data.get('file') as File;
-    const type = data.get('type') as string; // 'image' or 'pdf'
+    const type = data.get('type') as string; 
     
     if (!file) {
       return json({ success: false, error: 'No file provided' }, { status: 400 });
     }
 
-    // Convert file to base64 for Cloudinary upload
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const base64String = `data:${file.type};base64,${buffer.toString('base64')}`;
 
-    // Upload to Cloudinary
-    const result = await cloudinary.uploader.upload(base64String, {
-      resource_type: 'auto',
-      folder: 'seyon_cms'
+    // Raw uploads (PDFs) need the extension in public_id — Cloudinary only auto-appends for images.
+    const publicIdSuffix = `_${Date.now()}`;
+    const baseName = file.name.split('.')[0].replace(/[^a-zA-Z0-9]/g, '_');
+    const extension = type === 'pdf' ? '.pdf' : '';
+    const publicId = `${baseName}${publicIdSuffix}${extension}`;
+
+    // PDFs must use 'raw' resource_type — free tier blocks PDF delivery via the image pipeline
+    const resourceType = type === 'pdf' ? 'raw' : 'image';
+
+    const result = await new Promise<any>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream({
+        resource_type: resourceType,
+        folder: 'seyon_cms',
+        public_id: publicId,
+      }, (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      });
+      
+      uploadStream.end(buffer);
     });
 
     return json({ success: true, url: result.secure_url });

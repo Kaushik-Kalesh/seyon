@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
   import { fade, slide } from 'svelte/transition';
   import RichTextEditor from '$lib/components/RichTextEditor.svelte';
   let { data } = $props();
@@ -18,6 +18,7 @@
 
   function triggerUpload(type: 'image'|'pdf', item: any, prop?: string) {
     uploadTarget = { type, item, prop };
+    fileInputRef.accept = type === 'pdf' ? '.pdf' : 'image/*';
     fileInputRef.click();
   }
 
@@ -34,6 +35,9 @@
     formData.append('file', file);
     formData.append('type', uploadTarget.type);
 
+    // Determine the property to update
+    const prop = uploadTarget.type === 'pdf' ? (uploadTarget.prop || 'pdfUrl') : (uploadTarget.prop || 'imageUrl');
+
     try {
       const res = await fetch('/api/upload', {
         method: 'POST',
@@ -43,18 +47,14 @@
       
       if (!result.success) throw new Error(result.error);
       
-      if (uploadTarget.type === 'pdf') {
-        uploadTarget.item[uploadTarget.prop || 'pdfUrl'] = result.url;
-      } else if (uploadTarget.type === 'image') {
-        uploadTarget.item[uploadTarget.prop || 'imageUrl'] = result.url;
-      }
+      uploadTarget.item[prop] = result.url;
       
     } catch (err: any) {
       saveStatus = { type: 'error', message: 'Upload failed: ' + err.message };
       setTimeout(() => saveStatus = null, 3000);
     } finally {
       isUploading = false;
-      saveStatus = { type: 'success', message: 'Image uploaded successfully! Remember to Save.' };
+      saveStatus = { type: 'success', message: `${uploadTarget?.type === 'pdf' ? 'PDF' : 'Image'} uploaded successfully! Remember to Save.` };
       setTimeout(() => saveStatus = null, 3000);
       uploadTarget = null;
       input.value = ''; // Reset input
@@ -788,6 +788,7 @@
     </div>
   </div>
 {/if}
+
 
 
 
