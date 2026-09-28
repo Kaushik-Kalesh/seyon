@@ -6,6 +6,8 @@
 
 <svelte:head>
     <title>{product.name} | Seyon</title>
+    <meta property="og:title" content="{product.name} | Seyon" />
+    <meta property="og:description" content="Explore {product.name} models and specifications from Seyon." />
 </svelte:head>
 
 <section class="page-container py-24">

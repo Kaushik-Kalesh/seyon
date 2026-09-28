@@ -25,11 +25,9 @@ export async function POST({ request, cookies }) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Raw uploads (PDFs) need the extension in public_id — Cloudinary only auto-appends for images.
+    // Image uploads do not need extension in public_id. Cloudinary appends it automatically.
     const publicIdSuffix = `_${Date.now()}`;
-    const baseName = file.name.split('.')[0].replace(/[^a-zA-Z0-9]/g, '_');
-    const extension = type === 'pdf' ? '.pdf' : '';
-    const publicId = `${baseName}${publicIdSuffix}${extension}`;
+    const publicId = `${file.name.split('.')[0].replace(/[^a-zA-Z0-9]/g, '_')}${publicIdSuffix}`;
 
     // PDFs must use 'raw' resource_type — free tier blocks PDF delivery via the image pipeline
     const resourceType = type === 'pdf' ? 'raw' : 'image';

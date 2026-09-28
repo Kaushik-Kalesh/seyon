@@ -5,6 +5,8 @@
 
 <svelte:head>
     <title>Industries | Seyon</title>
+    <meta property="og:title" content="Industries | Seyon" />
+    <meta property="og:description" content="Discover the industries Seyon serves with high-quality industrial valve solutions." />
 </svelte:head>
 
 <div class="bg-dark text-white py-24 px-4 relative overflow-hidden">

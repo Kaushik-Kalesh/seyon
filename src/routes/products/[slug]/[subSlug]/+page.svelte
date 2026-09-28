@@ -6,6 +6,8 @@
 
 <svelte:head>
   <title>{product.name} | {parent.name} | Seyon</title>
+  <meta property="og:title" content="{product.name} | {parent.name} | Seyon" />
+  <meta property="og:description" content="Explore {product.name} under {parent.name} — models and specifications from Seyon." />
 </svelte:head>
 
 <div class="bg-dark text-white py-24 px-4 relative overflow-hidden">

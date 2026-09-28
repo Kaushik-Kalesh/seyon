@@ -392,7 +392,7 @@
                           <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Technical PDF</label>
                           <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-200 text-gray-900">
                             {#if model.pdfUrl}
-                              <a href={model.pdfUrl} target="_blank" class="flex-1 text-xs text-primary font-medium truncate px-2 hover:underline">View PDF</a>
+                              <a href="/api/pdf?url={encodeURIComponent(model.pdfUrl)}" target="_blank" class="flex-1 text-xs text-primary font-medium truncate px-2 hover:underline">View PDF</a>
                             {:else}
                               <span class="flex-1 text-xs text-gray-400 px-2">No PDF uploaded</span>
                             {/if}

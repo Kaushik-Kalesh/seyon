@@ -5,6 +5,8 @@
 
 <svelte:head>
   <title>Services | Seyon</title>
+  <meta property="og:title" content="Services | Seyon" />
+  <meta property="og:description" content="Explore Seyon's comprehensive industrial valve services including supply, maintenance, and technical support." />
 </svelte:head>
 
 <section class="py-24 bg-white border-b border-gray-100" id="services">

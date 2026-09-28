@@ -5,6 +5,8 @@
 
 <svelte:head>
   <title>{model.name} | Seyon</title>
+  <meta property="og:title" content="{model.name} | Seyon" />
+  <meta property="og:description" content="{model.name} — industrial valve specifications, features, and technical details from Seyon." />
 </svelte:head>
 
 <div class="bg-base min-h-screen py-12 md:py-24">
@@ -90,7 +92,7 @@
             Request Quote
           </a>
           {#if model.pdfUrl}
-            <a href={model.pdfUrl} target="_blank" class="px-6 py-4 rounded-xl font-semibold border border-gray-200 text-dark hover:border-dark hover:bg-gray-50 transition-colors flex items-center justify-center" title="Download PDF">
+            <a href="/api/pdf?url={encodeURIComponent(model.pdfUrl)}" target="_blank" class="px-6 py-4 rounded-xl font-semibold border border-gray-200 text-dark hover:border-dark hover:bg-gray-50 transition-colors flex items-center justify-center" title="Download PDF">
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
             </a>
           {/if}

@@ -7,6 +7,8 @@
 
 <svelte:head>
     <title>Contact Us | Seyon</title>
+    <meta property="og:title" content="Contact Us | Seyon" />
+    <meta property="og:description" content="Get in touch with Seyon for industrial valve inquiries, quotes, and support." />
 </svelte:head>
 
 <div class="bg-base min-h-screen py-24">

@@ -7,6 +7,8 @@
 
 <svelte:head>
     <title>Seyon | Reliable Industrial Valves Supply & Service</title>
+    <meta property="og:title" content="Seyon | Reliable Industrial Valves Supply & Service" />
+    <meta property="og:description" content="Seyon offers reliable industrial valves supply and service for all major industries." />
 </svelte:head>
 
 <!-- Hero Section -->

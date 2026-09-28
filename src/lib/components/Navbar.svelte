@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
     import { page } from "$app/state";
     import { slide } from 'svelte/transition';
 
@@ -144,7 +144,7 @@
                     <a
                         href={link.href}
                         onclick={() => isMobileMenuOpen = false}
-                        class="block px-3 py-3 text-base font-medium rounded-xl transition-colors
+                        class="block px-3 py-3 text-base font-medium rounded-xl transition-all duration-200
                             {page.url.pathname === link.href
                                 ? 'bg-primary/10 text-primary'
                                 : 'text-dark-gray hover:bg-gray-50 hover:text-dark'}"
@@ -153,28 +153,58 @@
                     </a>
                 {/each}
 
-                <!-- Mobile Models -->
-                <div class="px-3 py-3">
-                    <a href="/products" class="block text-base font-medium text-dark-gray mb-2 {page.url.pathname.includes('/products') ? 'text-primary' : 'hover:text-dark'}">Products</a>
-                    <div class="pl-4 space-y-1 border-l-2 border-gray-100">
-                        {#each products as product}
-                            <a href={product.url} class="block py-2 text-sm text-gray-600 hover:text-primary transition-colors">{product.name}</a>
-                            {#if product.subItems?.length > 0}
-                                <div class="pl-4 space-y-1">
-                                    {#each product.subItems as sub}
-                                        <a href={sub.url} class="block py-1.5 text-xs text-gray-500 hover:text-primary transition-colors">{sub.name}</a>
-                                    {/each}
-                                </div>
-                            {/if}
-                        {/each}
-                    </div>
+                <!-- Mobile Products (Collapsible) -->
+                <div>
+                    <button
+                        onclick={() => isProductsOpen = !isProductsOpen}
+                        class="w-full flex items-center justify-between px-3 py-3 text-base font-medium rounded-xl transition-all duration-200
+                            {page.url.pathname.includes('/products') || page.url.pathname.includes('/models')
+                                ? 'bg-primary/10 text-primary'
+                                : 'text-dark-gray hover:bg-gray-50 hover:text-dark'}"
+                    >
+                        Products
+                        <svg class="w-4 h-4 transition-transform duration-200 {isProductsOpen ? 'rotate-180' : ''}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    {#if isProductsOpen}
+                        <div class="pl-4 mt-1 space-y-0.5 border-l-2 border-gray-100 ml-3" transition:slide={{ duration: 200 }}>
+                            <a href="/products" onclick={() => isMobileMenuOpen = false}
+                                class="block py-2 px-3 text-sm rounded-lg transition-all duration-200
+                                    {page.url.pathname === '/products'
+                                        ? 'bg-primary/10 text-primary font-medium'
+                                        : 'text-gray-600 hover:bg-gray-50 hover:text-primary'}">
+                                All Products
+                            </a>
+                            {#each products as product}
+                                <a href={product.url} onclick={() => isMobileMenuOpen = false}
+                                    class="block py-2 px-3 text-sm rounded-lg transition-all duration-200
+                                        {page.url.pathname === product.url
+                                            ? 'bg-primary/10 text-primary font-medium'
+                                            : 'text-gray-600 hover:bg-gray-50 hover:text-primary'}">
+                                    {product.name}
+                                </a>
+                                {#if product.subItems?.length > 0}
+                                    <div class="pl-4 space-y-0.5">
+                                        {#each product.subItems as sub}
+                                            <a href={sub.url} onclick={() => isMobileMenuOpen = false}
+                                                class="block py-1.5 px-3 text-xs rounded-lg transition-all duration-200
+                                                    {page.url.pathname === sub.url
+                                                        ? 'bg-primary/10 text-primary font-medium'
+                                                        : 'text-gray-500 hover:bg-gray-50 hover:text-primary'}">
+                                                {sub.name}
+                                            </a>
+                                        {/each}
+                                    </div>
+                                {/if}
+                            {/each}
+                        </div>
+                    {/if}
                 </div>
 
                 {#each links.slice(3) as link}
                     <a
                         href={link.href}
                         onclick={() => isMobileMenuOpen = false}
-                        class="block px-3 py-3 text-base font-medium rounded-xl transition-colors
+                        class="block px-3 py-3 text-base font-medium rounded-xl transition-all duration-200
                             {page.url.pathname === link.href
                                 ? 'bg-primary/10 text-primary'
                                 : 'text-dark-gray hover:bg-gray-50 hover:text-dark'}"

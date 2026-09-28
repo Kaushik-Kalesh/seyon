@@ -5,6 +5,8 @@
 
 <svelte:head>
   <title>Brands | Seyon</title>
+  <meta property="og:title" content="Brands | Seyon" />
+  <meta property="og:description" content="Seyon partners with industry-leading brands to deliver the best in industrial valve technology." />
 </svelte:head>
 
 <section class="bg-gray-50 border-b border-gray-100 py-20 min-h-[85vh]">

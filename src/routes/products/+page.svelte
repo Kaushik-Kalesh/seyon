@@ -26,6 +26,8 @@
 
 <svelte:head>
     <title>All Models | Seyon</title>
+    <meta property="og:title" content="All Models | Seyon" />
+    <meta property="og:description" content="Browse Seyon's complete range of industrial valve models and products." />
 </svelte:head>
 
 <div class="bg-dark text-white py-12 sm:py-16 md:py-24 px-4 relative overflow-hidden">
