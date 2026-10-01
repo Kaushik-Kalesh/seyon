@@ -21,6 +21,7 @@ export async function GET({ url }) {
         });
     } catch (err: any) {
         console.error('PDF Proxy Error:', err);
+        if (err.status) throw err; // Re-throw SvelteKit HttpErrors (like 404)
         throw error(500, 'Failed to proxy PDF');
     }
 }

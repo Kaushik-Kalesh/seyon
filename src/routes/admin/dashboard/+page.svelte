@@ -31,31 +31,48 @@
     const file = input.files[0];
     isUploading = true;
     
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('type', uploadTarget.type);
-
     // Determine the property to update
     const prop = uploadTarget.type === 'pdf' ? (uploadTarget.prop || 'pdfUrl') : (uploadTarget.prop || 'imageUrl');
 
     try {
-      const res = await fetch('/api/upload', {
+      // 1. Get upload signature from backend
+      const sigRes = await fetch('/api/cloudinary-signature', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: uploadTarget.type, filename: file.name })
+      });
+      const sigData = await sigRes.json();
+      if (!sigData.success) throw new Error(sigData.error || 'Failed to get upload signature');
+
+      // 2. Upload directly to Cloudinary from the browser
+      const formData = new FormData();
+      // Crucial: we must name the file without an extension (e.g. 'file') 
+      // Otherwise, Cloudinary auto-appends .pdf to raw uploads and blocks delivery!
+      formData.append('file', file, 'file');
+      formData.append('api_key', sigData.apiKey);
+      formData.append('timestamp', sigData.timestamp);
+      formData.append('signature', sigData.signature);
+      formData.append('folder', sigData.folder);
+      formData.append('public_id', sigData.publicId);
+
+      const cloudinaryRes = await fetch(`https://api.cloudinary.com/v1_1/${sigData.cloudName}/${sigData.resourceType}/upload`, {
         method: 'POST',
         body: formData
       });
-      const result = await res.json();
+      const result = await cloudinaryRes.json();
       
-      if (!result.success) throw new Error(result.error);
+      if (result.error) throw new Error(result.error.message || 'Cloudinary upload failed');
       
-      uploadTarget.item[prop] = result.url;
+      uploadTarget.item[prop] = result.secure_url;
+      
+      saveStatus = { type: 'success', message: `${uploadTarget?.type === 'pdf' ? 'PDF' : 'Image'} uploaded successfully! Remember to Save.` };
+      setTimeout(() => saveStatus = null, 3000);
       
     } catch (err: any) {
       saveStatus = { type: 'error', message: 'Upload failed: ' + err.message };
       setTimeout(() => saveStatus = null, 3000);
     } finally {
       isUploading = false;
-      saveStatus = { type: 'success', message: `${uploadTarget?.type === 'pdf' ? 'PDF' : 'Image'} uploaded successfully! Remember to Save.` };
-      setTimeout(() => saveStatus = null, 3000);
       uploadTarget = null;
       input.value = ''; // Reset input
     }
